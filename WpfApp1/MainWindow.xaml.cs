@@ -1,0 +1,155 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Forms;
+using System.IO;
+
+namespace WpfApp1
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void GetFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                string pathSelected = string.Empty;
+
+                using (var dialog = new FolderBrowserDialog())
+                {
+                    if (UseHardCodedPathCheckBox.IsChecked == true)
+                    {
+                        pathSelected = @"D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists";
+                    }
+                    else
+                    {
+                        DialogResult result = dialog.ShowDialog();
+
+                        if (result == System.Windows.Forms.DialogResult.OK)
+                        {
+
+                            pathSelected = dialog.SelectedPath;
+                        }
+                    }
+                }
+
+                var files = Directory.EnumerateFiles(pathSelected, "*.*")
+                        .Where(fl => fl.ToLower().EndsWith(".mp3") || fl.ToLower().EndsWith(".flac"));
+
+
+                var songList = new List<SongFileInfo>();
+
+                foreach (var filepath in files)
+                {
+
+                    string filename = string.Empty;
+                    int dashPosition;
+                    string title;
+                    int lengthOfTitle;
+                    string artist;
+
+                    SongFileInfo song;
+
+                    try
+                    {
+                        filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
+                        dashPosition = filename.IndexOf(" - ");
+                        title = filename.Substring(0, dashPosition);
+                        lengthOfTitle = filename.Length - dashPosition;
+                        artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3);
+
+                        song = new SongFileInfo();
+                        song.FilePath = filepath;
+                        song.FileName = filename;
+                        song.Title = title;
+                        song.Artist = artist;
+
+                        songList.Add(song);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
+                    }
+
+
+
+
+                }
+
+                var songsByArtistThenTitle = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.Title);
+
+                SongsByArtistThenTitleGrid.ItemsSource = songsByArtistThenTitle;
+
+                var songsByTitleThenArtist = songList.OrderBy(sng => sng.Title).ThenBy(sng => sng.Artist);
+
+                SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist;
+
+                GetGapToNextOccurranceOfThisArtist(songsByTitleThenArtist);
+
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private static void GetGapToNextOccurranceOfThisArtist(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
+        {
+            int lastOccurrencePosition = 0;
+            string previousTitle = string.Empty;
+            string previousArtist = string.Empty;
+            string filename = string.Empty;
+
+            var songListByTitleThenArtist = songsByTitleThenArtist_IOrderedEnumerable.ToList<SongFileInfo>();
+
+            for (int currentPosition = 0; currentPosition < songsByTitleThenArtist_IOrderedEnumerable.Count(); currentPosition++)
+            {
+                var song = songsByTitleThenArtist_IOrderedEnumerable.ElementAt(currentPosition);
+
+                filename = song.FileName;
+
+                //https://stackoverflow.com/a/38822432/381082
+                var nextOccuranceIndex = songListByTitleThenArtist.FindIndex(currentPosition, sng => sng.Artist == previousArtist);
+
+                var artistGap = nextOccuranceIndex - currentPosition;
+                song.ArtistGap = artistGap;
+
+                try
+                {
+                    //https://stackoverflow.com/a/38821729/381082
+                    //find index of next of matching element
+                    //var sdf = songsByArtistThenTitle.Select((value, index) => new { value, index = index + 1 }).Where(x => x.value.Title == title).Skip(1).FirstOrDefault().index;
+
+                }
+                catch (Exception ex)
+                {
+
+                    System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
+                }
+
+                previousTitle = song.Title;
+                previousArtist = song.Artist;
+            }
+        }
+    }
+}
