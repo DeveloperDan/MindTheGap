@@ -36,9 +36,13 @@ namespace WpfApp1
 
                 using (var dialog = new FolderBrowserDialog())
                 {
-                    if (UseHardCodedPathCheckBox.IsChecked == true)
+                    if (UseHardCodedPathRadioButton.IsChecked == true)
                     {
                         pathSelected = @"D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists";
+                    }
+                    else if (UseHardCodedPath2RadioButton.IsChecked == true)
+                    {
+                        pathSelected = @"\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans";
                     }
                     else
                     {
@@ -105,6 +109,15 @@ namespace WpfApp1
 
                 GetGapToNextOccurranceOfThisArtist(songsByTitleThenArtist);
 
+                var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
+
+                SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
+
+                var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.ArtistCount).Where(sng=>sng.ArtistGapAhead > 0);
+
+                SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
+
+
             }
             catch (Exception ex)
             {
@@ -115,7 +128,7 @@ namespace WpfApp1
 
         private static void GetGapToNextOccurranceOfThisArtist(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
         {
-            int lastOccurrencePosition = 0;
+            int artistCount = 0;
             string previousTitle = string.Empty;
             string previousArtist = string.Empty;
             string filename = string.Empty;
@@ -149,6 +162,10 @@ namespace WpfApp1
 
                     System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
                 }
+
+                song.ArtistCount = (from sng in songListByTitleThenArtist
+                                    where sng.Artist == song.Artist
+                                    select sng).Count();
 
                 previousTitle = song.Title;
                 previousArtist = song.Artist;
