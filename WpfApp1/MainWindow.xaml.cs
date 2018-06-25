@@ -32,6 +32,8 @@ namespace WpfApp1
             try
             {
 
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
                 string pathSelected = string.Empty;
 
                 using (var dialog = new FolderBrowserDialog())
@@ -125,6 +127,11 @@ namespace WpfApp1
             {
 
                 System.Windows.MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                this.Title = "Updated: " + DateTime.Now.ToLongTimeString();
             }
         }
 
