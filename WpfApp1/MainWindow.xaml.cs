@@ -122,17 +122,20 @@ namespace WpfApp1
 
             var songListByTitleThenArtist = songsByTitleThenArtist_IOrderedEnumerable.ToList<SongFileInfo>();
 
-            for (int currentPosition = 0; currentPosition < songsByTitleThenArtist_IOrderedEnumerable.Count(); currentPosition++)
+            for (int currentIndex = 0; currentIndex < songsByTitleThenArtist_IOrderedEnumerable.Count(); currentIndex++)
             {
-                var song = songsByTitleThenArtist_IOrderedEnumerable.ElementAt(currentPosition);
+                var song = songsByTitleThenArtist_IOrderedEnumerable.ElementAt(currentIndex);
+                song.Position = currentIndex+1;
 
                 filename = song.FileName;
 
                 //https://stackoverflow.com/a/38822432/381082
-                var nextOccuranceIndex = songListByTitleThenArtist.FindIndex(currentPosition, sng => sng.Artist == previousArtist);
+                var nextOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
 
-                var artistGap = nextOccuranceIndex - currentPosition;
-                song.ArtistGap = artistGap;
+                song.NextOccuranceOfArtistIsAt = nextOccuranceIndex+1;
+
+                var artistGap = nextOccuranceIndex - currentIndex;
+                song.ArtistGapAhead = artistGap;
 
                 try
                 {
