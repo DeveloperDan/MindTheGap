@@ -44,14 +44,16 @@ namespace WpfApp1
                     {
                         pathSelected = @"\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans";
                     }
+                    else if (UseLastPickerPathRadioButton.IsChecked == true)
+                        pathSelected = LastPickerPathTextBox.Text;
                     else
                     {
                         DialogResult result = dialog.ShowDialog();
 
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
-
                             pathSelected = dialog.SelectedPath;
+                            LastPickerPathTextBox.Text = pathSelected;
                         }
                     }
                 }

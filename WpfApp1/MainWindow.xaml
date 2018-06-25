@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="617" Width="1379.5" WindowStartupLocation="CenterOwner">
-    <Grid Margin="0,0,-57,0">
+        Title="MainWindow" Height="756.5" Width="1379.5" WindowStartupLocation="CenterOwner">
+    <Grid Margin="0,0,-57,96">
         <Button x:Name="GetFilesButton" Content="Get Files" HorizontalAlignment="Left" Margin="7,10,0,0" VerticalAlignment="Top" Width="137" RenderTransformOrigin="0.5,0.5" Height="26" Click="GetFilesButton_Click">
             <Button.RenderTransform>
                 <TransformGroup>
@@ -17,15 +17,20 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="239" Margin="701,67,0,0" VerticalAlignment="Top" Width="656"/>
-        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="239" Margin="10,67,0,0" VerticalAlignment="Top" Width="656"/>
+
         <!--<StackPanel>-->
-        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Content="Use Folder Picker" Margin="173,10,190,556"/>
-        <RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath" Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062" />
-        <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071"/>
-        <DataGrid x:Name="SongsByArtistCountGrid" HorizontalAlignment="Left" Height="239" Margin="10,334,0,0" VerticalAlignment="Top" Width="656"/>
-        <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="239" Margin="701,334,-44,0" VerticalAlignment="Top" Width="656"/>
+        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Content="Use Folder Picker" Margin="173,10,0,0"/>
+        <RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
+        <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />
+        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use Last Picker Path" Margin="173,66,0,0"/>
+        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="308,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="962"/>
         <!--</StackPanel>-->
+
+        <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="239" Margin="701,101,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="239" Margin="10,101,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsByArtistCountGrid" HorizontalAlignment="Left" Height="239" Margin="10,368,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="239" Margin="701,368,0,0" VerticalAlignment="Top" Width="656"/>
+
 
     </Grid>
 </Window>
