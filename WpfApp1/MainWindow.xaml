@@ -34,7 +34,7 @@
         <Label Content="Sorted by Title" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>
         <Label Content="Sorted by Artist" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,55,0,0"/>
         <Label Content="Sorted by Artist Gap" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,295,0,0"/>
-        <Label Content="Sorted by Artist Count" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="26,295,0,0"/>
+        <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars" HorizontalAlignment="Left" VerticalAlignment="Top" Width="322" Margin="26,295,0,0"/>
 
     </Grid>
 </Window>

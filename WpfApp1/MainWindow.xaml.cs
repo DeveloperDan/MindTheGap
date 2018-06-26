@@ -114,15 +114,18 @@ namespace WpfApp1
 
                 GetGapToNextOccurranceOfThisArtist(songsByTitleThenArtist);
 
-                var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
+                //var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
 
-                SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
+                //SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
 
-                var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.ArtistCount).Where(sng=>sng.ArtistGapAhead > 0);
+                var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng=>sng.ArtistGapAhead > 0);
 
                 SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
 
+                ///////
+                var songsBySmallestArtistTenCharsGap = songList.OrderBy(sng => sng.ArtistGapTenChars).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapTenChars > 0);
 
+                SongsByArtistCountGrid.ItemsSource = songsBySmallestArtistTenCharsGap;
             }
             catch (Exception ex)
             {
@@ -162,15 +165,14 @@ namespace WpfApp1
 
                 try
                 {
-                    //https://stackoverflow.com/a/38821729/381082
-                    //find index of next of matching element
-                    //var sdf = songsByArtistThenTitle.Select((value, index) => new { value, index = index + 1 }).Where(x => x.value.Title == title).Skip(1).FirstOrDefault().index;
+                    var nextOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
+                    song.ArtistGapTenChars = nextOccuranceTenCharsIndex - currentIndex;
 
                 }
                 catch (Exception ex)
                 {
 
-                    System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
+                    //swallow the error
                 }
 
                 song.ArtistCount = (from sng in songListByTitleThenArtist
