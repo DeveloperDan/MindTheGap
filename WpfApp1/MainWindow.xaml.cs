@@ -38,15 +38,16 @@ namespace WpfApp1
 
                 using (var dialog = new FolderBrowserDialog())
                 {
-                    if (UseHardCodedPathRadioButton.IsChecked == true)
-                    {
-                        pathSelected = @"D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists";
-                    }
-                    else if (UseHardCodedPath2RadioButton.IsChecked == true)
-                    {
-                        pathSelected = @"\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans";
-                    }
-                    else if (UseLastPickerPathRadioButton.IsChecked == true)
+                    //if (UseHardCodedPathRadioButton.IsChecked == true)
+                    //{
+                    //    pathSelected = @"D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists";
+                    //}
+                    //else if (UseHardCodedPath2RadioButton.IsChecked == true)
+                    //{
+                    //    pathSelected = @"\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans";
+                    //}
+
+                    if (UseLastPickerPathRadioButton.IsChecked == true)
                         pathSelected = LastPickerPathTextBox.Text;
                     else
                     {

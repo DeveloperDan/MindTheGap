@@ -19,18 +19,22 @@
         </Button>
 
         <!--<StackPanel>-->
-        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Content="Use Folder Picker" Margin="173,10,0,0"/>
-        <RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
-        <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />
-        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use Last Picker Path" Margin="173,66,0,0"/>
-        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="308,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="962"/>
+        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,5,1126,602" Content="Use Folder Picker&#xD;&#xA;" IsChecked="True"></RadioButton>
+        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use Last Picker Path" Margin="173,32,1112,574" IsChecked="True"/>
+        <!--<RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
+        <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />-->
+
+        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="322,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="962"/>
         <!--</StackPanel>-->
 
-        <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="239" Margin="701,101,0,0" VerticalAlignment="Top" Width="656"/>
-        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="239" Margin="10,101,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="239" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="239" Margin="10,78,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsByArtistCountGrid" HorizontalAlignment="Left" Height="239" Margin="10,368,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="239" Margin="701,368,0,0" VerticalAlignment="Top" Width="656"/>
-
+        <Label Content="Sorted by Artist" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>
+        <Label Content="Sorted by Title" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,55,0,0"/>
+        <Label Content="Sorted by Artist Gap" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,337,0,0"/>
+        <Label Content="Sorted by Artist Count" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="26,337,0,0"/>
 
     </Grid>
 </Window>
