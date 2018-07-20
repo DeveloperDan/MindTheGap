@@ -20,11 +20,11 @@
 
         <!--<StackPanel>-->
         <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,4,866,550" Content="Use Folder Picker&#xD;&#xA;" IsChecked="True" Height="23" Width="333"></RadioButton>
-        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use Last Picker Path" Margin="173,32,1050,522"/>
+        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use This (Last Picker) Path" Margin="173,32,1024,522"/>
         <!--<RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
         <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />-->
 
-        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="322,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1035"/>
+        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="354,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1003"/>
         <!--</StackPanel>-->
 
         <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="182" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
@@ -33,8 +33,8 @@
         <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="205" Margin="701,326,0,0" VerticalAlignment="Top" Width="656"/>
         <Label Content="Sorted by Title" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>
         <Label Content="Sorted by Artist" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,55,0,0"/>
-        <Label Content="Sorted by Artist Gap" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,295,0,0"/>
-        <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars" HorizontalAlignment="Left" VerticalAlignment="Top" Width="322" Margin="26,295,0,0"/>
+        <Label Content="Sorted by Artist Gap (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="436" Margin="701,295,0,0"/>
+        <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="562" Margin="26,295,0,0"/>
 
     </Grid>
 </Window>

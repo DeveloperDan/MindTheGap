@@ -114,18 +114,24 @@ namespace WpfApp1
 
                 GetGapToNextOccurranceOfThisArtist(songsByTitleThenArtist);
 
-                //var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
-
-                //SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
-
                 var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng=>sng.ArtistGapAhead > 0);
 
                 SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
 
                 ///////
-                var songsBySmallestArtistTenCharsGap = songList.OrderBy(sng => sng.ArtistGapTenChars).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapTenChars > 0);
 
-                SongsByArtistCountGrid.ItemsSource = songsBySmallestArtistTenCharsGap;
+                if (1 == 2) // show ten chars result in lower right grid
+                {
+                    var songsBySmallestArtistTenCharsGap = songList.OrderBy(sng => sng.ArtistGapTenChars).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapTenChars > 0);
+
+                    SongsByArtistCountGrid.ItemsSource = songsBySmallestArtistTenCharsGap;
+                }
+                else // show sorted by artist count in lower right grid
+                {
+                    var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
+
+                    SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
+                }
             }
             catch (Exception ex)
             {
