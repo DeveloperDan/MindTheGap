@@ -34,88 +34,19 @@ namespace WpfApp1
 
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-                string pathSelected = string.Empty;
+                IEnumerable<string> musicFilePathsList = GetListOfMusicFilePaths();
 
-                using (var dialog = new FolderBrowserDialog())
-                {
-                    //if (UseHardCodedPathRadioButton.IsChecked == true)
-                    //{
-                    //    pathSelected = @"D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists";
-                    //}
-                    //else if (UseHardCodedPath2RadioButton.IsChecked == true)
-                    //{
-                    //    pathSelected = @"\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans";
-                    //}
-
-                    if (UseLastPickerPathRadioButton.IsChecked == true)
-                        pathSelected = LastPickerPathTextBox.Text;
-                    else
-                    {
-                        DialogResult result = dialog.ShowDialog();
-
-                        if (result == System.Windows.Forms.DialogResult.OK)
-                        {
-                            pathSelected = dialog.SelectedPath;
-                            LastPickerPathTextBox.Text = pathSelected;
-                        }
-                    }
-                }
-
-                var files = Directory.EnumerateFiles(pathSelected, "*.*")
-                        .Where(fl => fl.ToLower().EndsWith(".mp3") || fl.ToLower().EndsWith(".flac"));
-
-
-                var songList = new List<SongFileInfo>();
-
-                foreach (var filepath in files)
-                {
-
-                    string filename = string.Empty;
-                    int dashPosition;
-                    string title;
-                    int lengthOfTitle;
-                    string artist;
-
-                    SongFileInfo song;
-
-                    try
-                    {
-                        filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
-                        dashPosition = filename.IndexOf(" - ");
-                        title = filename.Substring(0, dashPosition);
-                        lengthOfTitle = filename.Length - dashPosition;
-                        artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3);
-
-                        song = new SongFileInfo();
-                        song.FilePath = filepath;
-                        song.FileName = filename;
-                        song.Title = title;
-                        song.Artist = artist;
-
-                        songList.Add(song);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
-                    }
-
-
-
-
-                }
+                List<SongFileInfo> songList = BuildSongList(musicFilePathsList);
 
                 var songsByArtistThenTitle = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.Title);
-
                 SongsByArtistThenTitleGrid.ItemsSource = songsByArtistThenTitle;
 
                 var songsByTitleThenArtist = songList.OrderBy(sng => sng.Title).ThenBy(sng => sng.Artist);
-
                 SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist;
 
-                GetGapToNextOccurranceOfThisArtist(songsByTitleThenArtist);
+                CalculateGapsToSameArtistAndTitle(songsByTitleThenArtist);
 
-                var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng=>sng.ArtistGapAhead > 0);
-
+                var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapAhead > 0);
                 SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
 
                 ///////
@@ -128,7 +59,7 @@ namespace WpfApp1
                 }
                 else // show sorted by artist count in lower right grid
                 {
-                    var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng=> sng.ArtistGapAhead);
+                    var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng => sng.ArtistGapAhead);
 
                     SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
                 }
@@ -145,9 +76,76 @@ namespace WpfApp1
             }
         }
 
-        private static void GetGapToNextOccurranceOfThisArtist(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
+        private static List<SongFileInfo> BuildSongList(IEnumerable<string> files)
         {
-            int artistCount = 0;
+            var songList = new List<SongFileInfo>();
+
+            foreach (var filepath in files)
+            {
+
+                string filename = string.Empty;
+                int dashPosition;
+                string title;
+                int lengthOfTitle;
+                string artist;
+
+                SongFileInfo song;
+
+                try
+                {
+                    filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
+                    dashPosition = filename.IndexOf(" - ");
+                    title = filename.Substring(0, dashPosition);
+                    lengthOfTitle = filename.Length - dashPosition;
+                    artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3);
+
+                    song = new SongFileInfo();
+                    song.FilePath = filepath;
+                    song.FileName = filename;
+                    song.Title = title;
+                    song.Artist = artist;
+
+                    songList.Add(song);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("File name: " + filename + "     Error:  " + ex.ToString());
+                }
+            }
+
+            return songList;
+        }
+
+        private IEnumerable<string> GetListOfMusicFilePaths()
+        {
+            string pathSelected = string.Empty;
+
+            using (var dialog = new FolderBrowserDialog())
+            {
+
+                if (UseLastPickerPathRadioButton.IsChecked == true)
+                    pathSelected = LastPickerPathTextBox.Text;
+                else
+                {
+                    DialogResult result = dialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        pathSelected = dialog.SelectedPath;
+                        LastPickerPathTextBox.Text = pathSelected;
+                    }
+                }
+            }
+
+            var files = Directory.EnumerateFiles(pathSelected, "*.*")
+                    .Where(fl => fl.ToLower().EndsWith(".mp3") || fl.ToLower().EndsWith(".flac"));
+            return files;
+        }
+
+        private static void CalculateGapsToSameArtistAndTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
+        {
+            //routine was called: GetGapToNextOccurranceOfThisArtist
+            //int artistCount = 0;
             string previousTitle = string.Empty;
             string previousArtist = string.Empty;
             string filename = string.Empty;
@@ -161,18 +159,21 @@ namespace WpfApp1
 
                 filename = song.FileName;
 
+
+                // Get Artist gap +++++++++++++++++++++++++++++
+
                 //https://stackoverflow.com/a/38822432/381082
-                var nextOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
+                var nextArtistOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
 
-                song.NextOccuranceOfArtistIsAt = nextOccuranceIndex+1;
+                song.NextOccuranceOfArtistIsAt = nextArtistOccuranceIndex+1;
 
-                var artistGap = nextOccuranceIndex - currentIndex;
+                var artistGap = nextArtistOccuranceIndex - currentIndex;
                 song.ArtistGapAhead = artistGap;
 
                 try
                 {
-                    var nextOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
-                    song.ArtistGapTenChars = nextOccuranceTenCharsIndex - currentIndex;
+                    var nextArtistOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
+                    song.ArtistGapTenChars = nextArtistOccuranceTenCharsIndex - currentIndex;
 
                 }
                 catch (Exception ex)
@@ -185,9 +186,91 @@ namespace WpfApp1
                                     where sng.Artist == song.Artist
                                     select sng).Count();
 
+
+                // Get Title gap ++++++++++++++++++++++++++++++++
+
+                //https://stackoverflow.com/a/38822432/381082
+                var nextTitleOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Title == song.Title);
+
+                song.NextOccuranceOfTitleIsAt = nextTitleOccuranceIndex + 1;
+
+                var titleGap = nextTitleOccuranceIndex - currentIndex;
+                song.TitleGapAhead = titleGap;
+
+                try
+                {
+                    var nextTitleOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Title.Substring(0, 10) == song.Title.Substring(0, 10));
+                    song.TitleGapTenChars = nextTitleOccuranceTenCharsIndex - currentIndex;
+
+                }
+                catch (Exception ex)
+                {
+
+                    //swallow the error
+                }
+
+                song.TitleCount = (from sng in songListByTitleThenArtist
+                                    where sng.Title == song.Title
+                                    select sng).Count();
+
+
+
+                //+++++++++++++++++++++++++
+
+
                 previousTitle = song.Title;
                 previousArtist = song.Artist;
             }
         }
+
+
+
+
+//private static void GetGapToNextOccurranceOfThisTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
+//        {
+//            //int titleCount = 0;
+//            string previousTitle = string.Empty;
+//            string previousArtist = string.Empty;
+//            string filename = string.Empty;
+
+//            var songListByTitleThenArtist = songsByTitleThenArtist_IOrderedEnumerable.ToList<SongFileInfo>();
+
+//            for (int currentIndex = 0; currentIndex < songsByTitleThenArtist_IOrderedEnumerable.Count(); currentIndex++)
+//            {
+//                var song = songsByTitleThenArtist_IOrderedEnumerable.ElementAt(currentIndex);
+//                song.Position = currentIndex+1;
+
+//                filename = song.FileName;
+
+//                //https://stackoverflow.com/a/38822432/381082
+//                var nextOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
+
+//                song.NextOccuranceOfArtistIsAt = nextOccuranceIndex+1;
+
+//                var artistGap = nextOccuranceIndex - currentIndex;
+//                song.ArtistGapAhead = artistGap;
+
+//                try
+//                {
+//                    var nextOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
+//                    song.ArtistGapTenChars = nextOccuranceTenCharsIndex - currentIndex;
+
+//                }
+//                catch (Exception ex)
+//                {
+
+//                    //swallow the error
+//                }
+
+//                song.TitleCount = (from sng in songListByTitleThenArtist
+//                                    where sng.Title == song.Title
+//                                    select sng).Count();
+
+//                previousTitle = song.Title;
+//                previousArtist = song.Artist;
+//            }
+//        }
+
+
     }
 }
