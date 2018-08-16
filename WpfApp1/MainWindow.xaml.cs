@@ -36,7 +36,7 @@ namespace WpfApp1
 
                 IEnumerable<string> musicFilePathsList = GetListOfMusicFilePaths();
 
-                List<SongFileInfo> songList = BuildSongList(musicFilePathsList);
+                List<SongFileInfo> songList = PraseFileNamesIntoSongList(musicFilePathsList);
 
                 var songsByArtistThenTitle = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.Title);
                 SongsByArtistThenTitleGrid.ItemsSource = songsByArtistThenTitle;
@@ -76,15 +76,17 @@ namespace WpfApp1
             }
         }
 
-        private static List<SongFileInfo> BuildSongList(IEnumerable<string> files)
+        private static List<SongFileInfo> PraseFileNamesIntoSongList(IEnumerable<string> musicFilePathsList)
         {
             var songList = new List<SongFileInfo>();
 
-            foreach (var filepath in files)
+            foreach (var filepath in musicFilePathsList)
             {
 
                 string filename = string.Empty;
                 int dashPosition;
+                int tildePosition;
+                int parenPositionMinusTwo;
                 string title;
                 int lengthOfTitle;
                 string artist;
@@ -95,9 +97,18 @@ namespace WpfApp1
                 {
                     filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
                     dashPosition = filename.IndexOf(" - ");
-                    title = filename.Substring(0, dashPosition);
+                    tildePosition = filename.IndexOf("~");
+                    parenPositionMinusTwo = filename.IndexOf("(") - 2;
+                    if (parenPositionMinusTwo > -1)
+                    {
+                        title = filename.Substring(tildePosition + 1, parenPositionMinusTwo - tildePosition + 1).Trim();
+                    }
+                    else
+                    {
+                        title = filename.Substring(tildePosition + 1, dashPosition - tildePosition + 1).Trim();
+                    }
                     lengthOfTitle = filename.Length - dashPosition;
-                    artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3);
+                    artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3).Trim();
 
                     song = new SongFileInfo();
                     song.FilePath = filepath;
