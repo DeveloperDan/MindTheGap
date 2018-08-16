@@ -44,7 +44,10 @@ namespace WpfApp1
                 var songsByTitleThenArtist = songList.OrderBy(sng => sng.Title).ThenBy(sng => sng.Artist);
                 SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist;
 
-                CalculateGapsToSameArtistAndTitle(songsByTitleThenArtist);
+                var songsByFileName = songList.OrderBy(sng => sng.FileName);
+
+                //was: CalculateGapsToSameArtistAndTitle(songsByTitleThenArtist);
+                CalculateGapsToSameArtistAndTitle(songsByFileName);
 
                 var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapAhead > 0);
                 SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
@@ -85,8 +88,8 @@ namespace WpfApp1
 
                 string filename = string.Empty;
                 int dashPosition;
-                int tildePosition;
-                int parenPositionMinusTwo;
+                int tildePositionPlusOne;
+                int parenPositionMinusOne;
                 string title;
                 int lengthOfTitle;
                 string artist;
@@ -97,15 +100,16 @@ namespace WpfApp1
                 {
                     filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
                     dashPosition = filename.IndexOf(" - ");
-                    tildePosition = filename.IndexOf("~");
-                    parenPositionMinusTwo = filename.IndexOf("(") - 2;
-                    if (parenPositionMinusTwo > -1)
+                    tildePositionPlusOne = filename.IndexOf("~")+1;
+                    parenPositionMinusOne = filename.IndexOf("(") - 1;
+                    if (parenPositionMinusOne > -1)
                     {
-                        title = filename.Substring(tildePosition + 1, parenPositionMinusTwo - tildePosition + 1).Trim();
+
+                        title = filename.Substring(tildePositionPlusOne, parenPositionMinusOne - tildePositionPlusOne).Trim();
                     }
                     else
                     {
-                        title = filename.Substring(tildePosition + 1, dashPosition - tildePosition + 1).Trim();
+                        title = filename.Substring(tildePositionPlusOne, dashPosition - tildePositionPlusOne).Trim();
                     }
                     lengthOfTitle = filename.Length - dashPosition;
                     artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3).Trim();
@@ -153,7 +157,7 @@ namespace WpfApp1
             return files;
         }
 
-        private static void CalculateGapsToSameArtistAndTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
+        private static void CalculateGapsToSameArtistAndTitle(IOrderedEnumerable<SongFileInfo> songsByFileName_IOrderedEnumerable)
         {
             //routine was called: GetGapToNextOccurranceOfThisArtist
             //int artistCount = 0;
@@ -161,11 +165,11 @@ namespace WpfApp1
             string previousArtist = string.Empty;
             string filename = string.Empty;
 
-            var songListByTitleThenArtist = songsByTitleThenArtist_IOrderedEnumerable.ToList<SongFileInfo>();
+            var songListByFileName = songsByFileName_IOrderedEnumerable.ToList<SongFileInfo>();
 
-            for (int currentIndex = 0; currentIndex < songsByTitleThenArtist_IOrderedEnumerable.Count(); currentIndex++)
+            for (int currentIndex = 0; currentIndex < songsByFileName_IOrderedEnumerable.Count(); currentIndex++)
             {
-                var song = songsByTitleThenArtist_IOrderedEnumerable.ElementAt(currentIndex);
+                var song = songsByFileName_IOrderedEnumerable.ElementAt(currentIndex);
                 song.Position = currentIndex+1;
 
                 filename = song.FileName;
@@ -174,7 +178,7 @@ namespace WpfApp1
                 // Get Artist gap +++++++++++++++++++++++++++++
 
                 //https://stackoverflow.com/a/38822432/381082
-                var nextArtistOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
+                var nextArtistOccuranceIndex = songListByFileName.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
 
                 song.NextOccuranceOfArtistIsAt = nextArtistOccuranceIndex+1;
 
@@ -183,7 +187,7 @@ namespace WpfApp1
 
                 try
                 {
-                    var nextArtistOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
+                    var nextArtistOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
                     song.ArtistGapTenChars = nextArtistOccuranceTenCharsIndex - currentIndex;
 
                 }
@@ -193,7 +197,7 @@ namespace WpfApp1
                     //swallow the error
                 }
 
-                song.ArtistCount = (from sng in songListByTitleThenArtist
+                song.ArtistCount = (from sng in songListByFileName
                                     where sng.Artist == song.Artist
                                     select sng).Count();
 
@@ -201,7 +205,7 @@ namespace WpfApp1
                 // Get Title gap ++++++++++++++++++++++++++++++++
 
                 //https://stackoverflow.com/a/38822432/381082
-                var nextTitleOccuranceIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Title == song.Title);
+                var nextTitleOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Title == song.Title);
 
                 song.NextOccuranceOfTitleIsAt = nextTitleOccuranceIndex + 1;
 
@@ -210,7 +214,7 @@ namespace WpfApp1
 
                 try
                 {
-                    var nextTitleOccuranceTenCharsIndex = songListByTitleThenArtist.FindIndex(currentIndex + 1, sng => sng.Title.Substring(0, 10) == song.Title.Substring(0, 10));
+                    var nextTitleOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Title.Substring(0, 10) == song.Title.Substring(0, 10));
                     song.TitleGapTenChars = nextTitleOccuranceTenCharsIndex - currentIndex;
 
                 }
@@ -220,7 +224,7 @@ namespace WpfApp1
                     //swallow the error
                 }
 
-                song.TitleCount = (from sng in songListByTitleThenArtist
+                song.TitleCount = (from sng in songListByFileName
                                     where sng.Title == song.Title
                                     select sng).Count();
 
