@@ -1,13 +1,13 @@
-﻿<Window x:Class="WpfApp1.MainWindow"
+﻿<Window x:Class="MindTheGap.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:local="clr-namespace:MindTheGap"
         mc:Ignorable="d"
         Title="MainWindow" Height="609.5" Width="1379.5" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,0,2">
-        <Button x:Name="GetFilesButton" Content="Get Files" HorizontalAlignment="Left" Margin="7,10,0,0" VerticalAlignment="Top" Width="137" RenderTransformOrigin="0.5,0.5" Height="26" Click="GetFilesButton_Click">
+        <Button x:Name="GetFilesButton" Content="Get Files" HorizontalAlignment="Left" Margin="7,0,0,0" VerticalAlignment="Top" Width="137" RenderTransformOrigin="0.5,0.5" Height="26" Click="GetFilesButton_Click">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -19,22 +19,23 @@
         </Button>
 
         <!--<StackPanel>-->
-        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,4,866,550" Content="Use Folder Picker&#xD;&#xA;" IsChecked="True" Height="23" Width="333"></RadioButton>
-        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use This (Last Picker) Path" Margin="173,32,1024,522"/>
+        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,4,866,550" Content="Use Folder Picker&#xD;&#xA;" Height="23" Width="333"/>
+        <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use This (Last Picker) Path" Margin="302,4,895,550" IsChecked="True"/>
         <!--<RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
         <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />-->
 
-        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="354,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1003"/>
+        <TextBox x:Name="LastPickerPathTextBox" HorizontalAlignment="Left" Height="23" Margin="477,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="880"/>
         <!--</StackPanel>-->
 
-        <DataGrid x:Name="SongsByArtistThenTitleGrid" HorizontalAlignment="Left" Height="182" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="GridTwo" HorizontalAlignment="Left" Height="182" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="185" Margin="10,78,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsByArtistCountGrid" HorizontalAlignment="Left" Height="205" Margin="10,326,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="205" Margin="701,326,0,0" VerticalAlignment="Top" Width="656"/>
         <Label Content="Sorted by Title" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>
-        <Label Content="Sorted by Artist" HorizontalAlignment="Left" VerticalAlignment="Top" Width="143" Margin="701,55,0,0"/>
+        <Label Content="Sorted by Artist then Position" HorizontalAlignment="Left" VerticalAlignment="Top" Width="202" Margin="701,55,0,0"/>
         <Label Content="Sorted by Artist Gap (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="436" Margin="701,295,0,0"/>
         <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="562" Margin="26,295,0,0"/>
+        <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="1100,301,0,0" VerticalAlignment="Top" Width="257" Click="RepositionGridFourSelectionButton_Click"/>
 
     </Grid>
 </Window>
