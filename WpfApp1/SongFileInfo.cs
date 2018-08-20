@@ -32,7 +32,12 @@ namespace MindTheGap
 
         public string FileName { get; set; }
         public string FilePath { get; set; }
-        public int TitleGap { get; set; }
+        //public int TitleGap { get; set; }
+
+        public string Genre { get; set; }
+
+        public int GenreGapAhead { get; set; }
+        public int NextOccuranceOfGenreIsAt { get; set; }
 
     }
 }
