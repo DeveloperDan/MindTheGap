@@ -126,9 +126,12 @@ namespace MindTheGap
 
                     try
                     {
+                        // https://stackoverflow.com/a/40839588/381082
+
                         var musicFile = TagLib.File.Create(filepath);
                         var genre = musicFile.Tag.FirstGenre;
                         song.Genre = genre;
+
                     }
                     catch (Exception)
                     {
@@ -221,30 +224,6 @@ namespace MindTheGap
                                     where sng.Artist == song.Artist
                                     select sng).Count();
 
-                //sdf
-                // Get Genre gap +++++++++++++++++++++++++++++
-
-                //https://stackoverflow.com/a/38822432/381082
-                var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre == song.Genre);
-
-                song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
-
-                var genreGap = nextGenreOccuranceIndex - currentIndex;
-                song.GenreGapAhead = genreGap;
-
-                //try
-                //{
-                //    var nextGenreOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre.Substring(0, 10) == song.Genre.Substring(0, 10));
-                //    song.GenreGapTenChars = nextGenreOccuranceTenCharsIndex - currentIndex;
-
-                //}
-                //catch (Exception ex)
-                //{
-
-                //    //swallow the error
-                //}
-
-
                 // Get Title gap ++++++++++++++++++++++++++++++++
 
                 //https://stackoverflow.com/a/38822432/381082
@@ -271,9 +250,33 @@ namespace MindTheGap
                                     where sng.Title == song.Title
                                     select sng).Count();
 
+                // Work with Taglib to get and set values +++++++++++++++++++++++++
 
+                try
+                {
+                    // https://stackoverflow.com/a/40839588/381082
 
-                //+++++++++++++++++++++++++
+                    var musicFile = TagLib.File.Create(song.FilePath);
+                    musicFile.Tag.Track = (uint)song.Position;
+                    musicFile.Save();
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                // Get Genre gap +++++++++++++++++++++++++++++
+
+                //https://stackoverflow.com/a/38822432/381082
+                var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre == song.Genre);
+
+                song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
+
+                var genreGap = nextGenreOccuranceIndex - currentIndex;
+                song.GenreGapAhead = genreGap;
+
 
 
                 previousTitle = song.Title;
