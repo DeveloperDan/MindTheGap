@@ -259,8 +259,13 @@ namespace MindTheGap
                     if (UpdateMusicFilePositionCheckbox.IsChecked == true)
                     {
                         var musicFile = TagLib.File.Create(song.FilePath);
-                        musicFile.Tag.Track = (uint)song.Position;
-                        musicFile.Save();
+
+                        if (musicFile.Tag.Track != (uint)song.Position)
+                        {
+                            musicFile.Tag.Track = (uint)song.Position;
+                            musicFile.Save();
+                        }
+                        
                     }
 
                 }
