@@ -294,7 +294,7 @@ namespace MindTheGap
 
             try
             {
-                selectedSong = (SongFileInfo)GridTwo.SelectedItem;
+                selectedSong = (SongFileInfo)SongsByTitleThenArtistGrid.SelectedItem;
 
                 if (selectedSong == null)
                 {
@@ -307,10 +307,27 @@ namespace MindTheGap
                 if (true)
                 {
 
-                    List<SongFileInfo> songList = GridTwo.ItemsSource.Cast<SongFileInfo>().ToList();
+                    List<SongFileInfo> songList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
 
-                    var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && sng.GenreGapAhead > 4 && sng.Genre == selectedSong.Genre);
+                    var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && 
+                                                                sng.GenreGapAhead > 4 && 
+                                                                sng.Genre == selectedSong.Genre);
 
+                    string msg = string.Empty;
+
+                    foreach(var sng in songsFittingGapNeeds)
+                    {
+                      msg +=  sng.FileName + Environment.NewLine;
+                    }
+
+                    if (msg.Length < 999)
+                    {
+                        System.Windows.MessageBox.Show(msg);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 999));
+                    }
                 }
 
             }
