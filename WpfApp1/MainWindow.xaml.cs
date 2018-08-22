@@ -104,7 +104,7 @@ namespace MindTheGap
                 {
                     filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
                     dashPosition = filename.IndexOf(" - ");
-                    tildePositionPlusOne = filename.IndexOf("~")+1;
+                    tildePositionPlusOne = filename.IndexOf("~") + 1;
                     parenPositionMinusOne = filename.IndexOf("(") - 1;
                     if (parenPositionMinusOne > -1)
                     {
@@ -176,11 +176,11 @@ namespace MindTheGap
             //Properties.Settings.Default.Properties["PriorPathToMusicFiles"] = pathSelected;
 
             var files = Directory.EnumerateFiles(pathSelected, "*.*")
-                    .Where(fl => fl.ToLower().EndsWith(".mp3") || fl.ToLower().EndsWith(".flac") || fl.ToLower().EndsWith(".m4a")|| fl.ToLower().EndsWith(".ape"));
+                    .Where(fl => fl.ToLower().EndsWith(".mp3") || fl.ToLower().EndsWith(".flac") || fl.ToLower().EndsWith(".m4a") || fl.ToLower().EndsWith(".ape"));
             return files;
         }
 
-        private static void CalculateGapsToSameArtistAndTitle(IOrderedEnumerable<SongFileInfo> songsByFileName_IOrderedEnumerable)
+        private void CalculateGapsToSameArtistAndTitle(IOrderedEnumerable<SongFileInfo> songsByFileName_IOrderedEnumerable)
         {
             //routine was called: GetGapToNextOccurranceOfThisArtist
             //int artistCount = 0;
@@ -193,7 +193,7 @@ namespace MindTheGap
             for (int currentIndex = 0; currentIndex < songsByFileName_IOrderedEnumerable.Count(); currentIndex++)
             {
                 var song = songsByFileName_IOrderedEnumerable.ElementAt(currentIndex);
-                song.Position = currentIndex+1;
+                song.Position = currentIndex + 1;
 
                 filename = song.FileName;
 
@@ -201,9 +201,9 @@ namespace MindTheGap
                 // Get Artist gap +++++++++++++++++++++++++++++
 
                 //https://stackoverflow.com/a/38822432/381082
-                var nextArtistOccuranceIndex = songListByFileName.FindIndex(currentIndex+1, sng => sng.Artist == song.Artist);
+                var nextArtistOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist == song.Artist);
 
-                song.NextOccuranceOfArtistIsAt = nextArtistOccuranceIndex+1;
+                song.NextOccuranceOfArtistIsAt = nextArtistOccuranceIndex + 1;
 
                 var artistGap = nextArtistOccuranceIndex - currentIndex;
                 song.ArtistGapAhead = artistGap;
@@ -247,8 +247,8 @@ namespace MindTheGap
                 }
 
                 song.TitleCount = (from sng in songListByFileName
-                                    where sng.Title == song.Title
-                                    select sng).Count();
+                                   where sng.Title == song.Title
+                                   select sng).Count();
 
                 // Work with Taglib to get and set values +++++++++++++++++++++++++
 
@@ -256,9 +256,12 @@ namespace MindTheGap
                 {
                     // https://stackoverflow.com/a/40839588/381082
 
-                    var musicFile = TagLib.File.Create(song.FilePath);
-                    musicFile.Tag.Track = (uint)song.Position;
-                    musicFile.Save();
+                    if (UpdateMusicFilePositionCheckbox.IsChecked == true)
+                    {
+                        var musicFile = TagLib.File.Create(song.FilePath);
+                        musicFile.Tag.Track = (uint)song.Position;
+                        musicFile.Save();
+                    }
 
                 }
                 catch (Exception)
@@ -286,9 +289,43 @@ namespace MindTheGap
 
         private void RepositionGridFourSelectionButton_Click(object sender, RoutedEventArgs e)
         {
-            SongFileInfo selectedSong = (SongFileInfo)SongsBySmallestArtistGapGrid.SelectedItem;
 
-            System.Windows.MessageBox.Show(selectedSong.FileName);
+            SongFileInfo selectedSong;
+
+            try
+            {
+                selectedSong = (SongFileInfo)GridTwo.SelectedItem;
+
+                if (selectedSong == null)
+                {
+                    System.Windows.MessageBox.Show("No song selected.");
+                    return;
+                }
+
+                System.Windows.MessageBox.Show(selectedSong.FileName);
+
+                if (true)
+                {
+
+                    List<SongFileInfo> songList = GridTwo.ItemsSource.Cast<SongFileInfo>().ToList();
+
+                    var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && sng.GenreGapAhead > 4 && sng.Genre == selectedSong.Genre);
+
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+
+
+
+        }
+
+        private void UpdateMusicFilePositionCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
 
         }
 

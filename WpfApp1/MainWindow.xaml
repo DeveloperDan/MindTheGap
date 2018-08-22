@@ -35,7 +35,8 @@
         <Label Content="Sorted by Artist then Position" HorizontalAlignment="Left" VerticalAlignment="Top" Width="202" Margin="701,55,0,0"/>
         <Label Content="Sorted by Artist Gap (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="436" Margin="701,295,0,0"/>
         <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="562" Margin="26,295,0,0"/>
-        <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="1100,301,0,0" VerticalAlignment="Top" Width="257" Click="RepositionGridFourSelectionButton_Click"/>
+        <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="1042,56,0,0" VerticalAlignment="Top" Width="256" Click="RepositionGridFourSelectionButton_Click"/>
+        <CheckBox x:Name="UpdateMusicFilePositionCheckbox" Content="Update music file track with playlist (sort) position" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" Checked="UpdateMusicFilePositionCheckbox_Checked"/>
 
     </Grid>
 </Window>
