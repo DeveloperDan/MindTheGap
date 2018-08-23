@@ -200,13 +200,12 @@ namespace MindTheGap
 
                 // Get Artist gap +++++++++++++++++++++++++++++
 
-                //https://stackoverflow.com/a/38822432/381082
-                var nextArtistOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist == song.Artist);
+                song.NextOccuranceOfArtistIsAt =  GetNextOccuranceOfArtistIndex(songListByFileName, currentIndex, song);
 
-                song.NextOccuranceOfArtistIsAt = nextArtistOccuranceIndex + 1;
+                int artistGap = song.NextOccuranceOfArtistIsAt - (currentIndex + 1);
 
-                var artistGap = nextArtistOccuranceIndex - currentIndex;
                 song.ArtistGapAhead = artistGap;
+
 
                 try
                 {
@@ -265,7 +264,7 @@ namespace MindTheGap
                             musicFile.Tag.Track = (uint)song.Position;
                             musicFile.Save();
                         }
-                        
+
                     }
 
                 }
@@ -292,6 +291,15 @@ namespace MindTheGap
             }
         }
 
+        private static int GetNextOccuranceOfArtistIndex(List<SongFileInfo> songListByFileName, int currentIndex, SongFileInfo song)
+        {
+            //https://stackoverflow.com/a/38822432/381082
+            var nextArtistOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist == song.Artist);
+
+            return nextArtistOccuranceIndex + 1;
+
+        }
+
         private void RepositionGridFourSelectionButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -312,26 +320,51 @@ namespace MindTheGap
                 if (true)
                 {
 
-                    List<SongFileInfo> songList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
+                    List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
 
-                    var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && 
-                                                                sng.GenreGapAhead > 4 && 
-                                                                sng.Genre == selectedSong.Genre);
+
+                    //sng.ArtistGapAhead meaninless because it is the selectedSong.ArtistGapAhead AT THE NEW LOCATION that matters.
+                    //var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && 
+                    //                                            sng.GenreGapAhead > 4 && 
+                    //                                            sng.Genre == selectedSong.Genre);
+
+
+                    var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead > 4 &&
+                                                                sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);
+
+                    //var songsFittingGapNeeds = allSongsList.Where(sng => sng.Artist == sng.Artist).OrderBy(sng2 => sng2.FileName);
 
                     string msg = string.Empty;
 
-                    foreach(var sng in songsFittingGapNeeds)
+                    foreach(var songFittingGapNeeds in songsFittingGapNeeds)
                     {
-                      msg +=  sng.FileName + Environment.NewLine;
+
+                        int gapToNextOccuranceOfArtist = 0;
+
+                        var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position);
+
+                        foreach (var thisSongFromAllSong in allSongsStartingAtGapNeedsPostion)
+                        {
+
+                            if (thisSongFromAllSong.Artist == selectedSong.Artist)
+                            {
+                                gapToNextOccuranceOfArtist = thisSongFromAllSong.Position - songFittingGapNeeds.Position;
+
+                                msg += songFittingGapNeeds.FileName + ", gapToSameArtistFromCurrentSong: " + gapToNextOccuranceOfArtist + ", nextOccuranceOfArtistPosition: " + thisSongFromAllSong.Position + ", GenreGapAhead: " + songFittingGapNeeds.GenreGapAhead + Environment.NewLine;
+
+                                break;
+                            }
+                        }
+
                     }
 
-                    if (msg.Length < 999)
+                    if (msg.Length < 1999)
                     {
                         System.Windows.MessageBox.Show(msg);
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 999));
+                        System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 1999));
                     }
                 }
 
@@ -345,14 +378,6 @@ namespace MindTheGap
 
 
         }
-
-        private void UpdateMusicFilePositionCheckbox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
 
         //private static void GetGapToNextOccurranceOfThisTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
         //        {
