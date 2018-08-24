@@ -320,37 +320,88 @@ namespace MindTheGap
                 if (true)
                 {
 
+                    int artistGapRequested;
+
+                    if (int.TryParse(ArtistGapTextBox.Text, out artistGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
+
+                    int titleGapRequested;
+
+                    if (int.TryParse(TitleGapTextBox.Text, out titleGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
+                    int genreGapRequested;
+
+                    if (int.TryParse(GenreGapTextBox.Text, out genreGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
                     List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
 
 
-                    //sng.ArtistGapAhead meaninless because it is the selectedSong.ArtistGapAhead AT THE NEW LOCATION that matters.
-                    //var songsFittingGapNeeds = songList.Where(sng => sng.ArtistGapAhead > 7 && 
-                    //                                            sng.GenreGapAhead > 4 && 
-                    //                                            sng.Genre == selectedSong.Genre);
+                    //var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead > genreGapRequested &&
+                    //                                            sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
-
-                    var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead > 4 &&
-                                                                sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);
-
-                    //var songsFittingGapNeeds = allSongsList.Where(sng => sng.Artist == sng.Artist).OrderBy(sng2 => sng2.FileName);
+                    var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
+                                                                sng.TitleGapAhead >= titleGapRequested &&
+                                                                sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
                     string msg = string.Empty;
+                    int gapToNextOccuranceOfArtist = 0;
+                    int positionOfPreviousOccuranceOfArtist = 0;
+                    int gapFromPreviousOccuranceOfArtist = 0;
 
-                    foreach(var songFittingGapNeeds in songsFittingGapNeeds)
+
+                    foreach (var songFittingGapNeeds in songsFittingGapNeeds)
                     {
 
-                        int gapToNextOccuranceOfArtist = 0;
+                        var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position)
+                                                                                .OrderBy(sng2 => sng2.FileName);    //orderby is critical
 
-                        var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position);
+                        //tests below...
+
+                        //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position - artistGapRequested)
+                        //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
+
+                        //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > positionOfPreviousOccuranceOfArtist)
+                        //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
 
                         foreach (var thisSongFromAllSong in allSongsStartingAtGapNeedsPostion)
                         {
 
                             if (thisSongFromAllSong.Artist == selectedSong.Artist)
                             {
+                                
                                 gapToNextOccuranceOfArtist = thisSongFromAllSong.Position - songFittingGapNeeds.Position;
+                                gapFromPreviousOccuranceOfArtist = songFittingGapNeeds.Position - positionOfPreviousOccuranceOfArtist;
 
-                                msg += songFittingGapNeeds.FileName + ", gapToSameArtistFromCurrentSong: " + gapToNextOccuranceOfArtist + ", nextOccuranceOfArtistPosition: " + thisSongFromAllSong.Position + ", GenreGapAhead: " + songFittingGapNeeds.GenreGapAhead + Environment.NewLine;
+                                if (gapToNextOccuranceOfArtist >= artistGapRequested)
+                                {
+                                    if (gapFromPreviousOccuranceOfArtist >= artistGapRequested)
+                                    {
+                                        msg += songFittingGapNeeds.FileName + ", gapFromArtist: " + gapFromPreviousOccuranceOfArtist + ", gapToArtist: " + gapToNextOccuranceOfArtist + ", nextOccuranceOfArtistPosition: " + thisSongFromAllSong.Position + ", GenreGapAhead: " + songFittingGapNeeds.GenreGapAhead + Environment.NewLine;
+                                    }
+                                }
+
+                                positionOfPreviousOccuranceOfArtist = thisSongFromAllSong.Position;
 
                                 break;
                             }

@@ -35,8 +35,14 @@
         <Label Content="Sorted by Artist then Position" HorizontalAlignment="Left" VerticalAlignment="Top" Width="202" Margin="701,55,0,0"/>
         <Label Content="Sorted by Artist Gap (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="436" Margin="701,295,0,0"/>
         <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="562" Margin="26,295,0,0"/>
-        <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="410,52,0,0" VerticalAlignment="Top" Width="256" Click="RepositionGridFourSelectionButton_Click"/>
+        <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="518,52,0,0" VerticalAlignment="Top" Width="148" Click="RepositionGridFourSelectionButton_Click"/>
         <CheckBox x:Name="UpdateMusicFilePositionCheckbox" Content="Update music file track with playlist (sort) position" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TitleGapTextBox" HorizontalAlignment="Left" Height="20" Margin="417,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40" RenderTransformOrigin="-0.69,0.45" Text="22"/>
+        <TextBox x:Name="ArtistGapTextBox" HorizontalAlignment="Left" Height="20" Margin="547,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="41" RenderTransformOrigin="2.466,0.375" Text="7"/>
+        <TextBox x:Name="GenreGapTextBox" HorizontalAlignment="Left" Height="20" Margin="688,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" RenderTransformOrigin="2.466,0.375" Text="4"/>
+        <Label x:Name="TitleGapLabel" Content="Title Gap: " HorizontalAlignment="Left" Margin="352,26,0,0" VerticalAlignment="Top" Width="60"/>
+        <Label x:Name="ArtistGapLabel" Content="Artist Gap : " HorizontalAlignment="Left" Margin="477,25,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.242,0.519"/>
+        <Label x:Name="GenreGapLabel" Content="Genre Gap : " HorizontalAlignment="Left" Margin="618,23,0,0" VerticalAlignment="Top" Width="66"/>
 
     </Grid>
 </Window>
