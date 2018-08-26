@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,10 @@ namespace MindTheGap
 
         public int GenreGapAhead { get; set; }
         public int NextOccuranceOfGenreIsAt { get; set; }
+
+        public int tempArtistGapBehindFromSelectedSongToThisSong { get; set; }
+        public int tempArtistGapAheadFromSelectedSongToNextOccuranceOfArtist { get; set; }
+
 
     }
 }

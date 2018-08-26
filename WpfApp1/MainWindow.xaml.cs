@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -200,7 +201,7 @@ namespace MindTheGap
 
                 // Get Artist gap +++++++++++++++++++++++++++++
 
-                song.NextOccuranceOfArtistIsAt =  GetNextOccuranceOfArtistIndex(songListByFileName, currentIndex, song);
+                song.NextOccuranceOfArtistIsAt = GetNextOccuranceOfArtistIndex(songListByFileName, currentIndex, song);
 
                 int artistGap = song.NextOccuranceOfArtistIsAt - (currentIndex + 1);
 
@@ -302,7 +303,167 @@ namespace MindTheGap
 
         private void RepositionGridFourSelectionButton_Click(object sender, RoutedEventArgs e)
         {
+            RepositionSong();
 
+        }
+
+        private void RepositionSong()
+        {
+            SongFileInfo selectedSong;
+
+            try
+            {
+                selectedSong = (SongFileInfo)SongsByTitleThenArtistGrid.SelectedItem;
+
+                if (selectedSong == null)
+                {
+                    System.Windows.MessageBox.Show("No song selected.");
+                    return;
+                }
+
+                System.Windows.MessageBox.Show(selectedSong.FileName);
+
+                if (true)
+                {
+
+                    int artistGapRequested;
+
+                    if (int.TryParse(ArtistGapTextBox.Text, out artistGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
+
+                    int titleGapRequested;
+
+                    if (int.TryParse(TitleGapTextBox.Text, out titleGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
+                    int genreGapRequested;
+
+                    if (int.TryParse(GenreGapTextBox.Text, out genreGapRequested))
+                    {
+                        //parsing successful 
+                    }
+                    else
+                    {
+                        //parsing failed. 
+                    }
+
+                    List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
+
+
+                    //var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead > genreGapRequested &&
+                    //                                            sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
+
+                    var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
+                                                                sng.TitleGapAhead >= titleGapRequested &&
+                                                                sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
+
+                    string msg = string.Empty;
+                    int gapToNextOccuranceOfArtist = 0;
+                    int positionOfPreviousOccuranceOfArtist = 0;
+                    int gapFromPreviousOccuranceOfArtist = 0;
+                    bool atLeastTwoOccurancesOFArtistFound = false;
+
+                    // get the artist gaps (ahead and behind)
+                    foreach (var thisSongFromAllSong in allSongsList)
+                    {
+                        // loop thru all songs stopping at selected artist to save it's position
+                        if (thisSongFromAllSong.Artist == selectedSong.Artist)
+                        {
+                            positionOfPreviousOccuranceOfArtist = thisSongFromAllSong.Position;
+                        }
+
+                        // loop thru songs fitting gap needs
+                        foreach (var songFittingGapNeeds in songsFittingGapNeeds)
+                        {
+                            // use prev artist postion to calculate artist gap behind
+                            int tempArtistGapBehind = songFittingGapNeeds.Position - positionOfPreviousOccuranceOfArtist;
+                            // overwrite previously found tempArtistGapFromSelectedSongToThisSong if the outer loop hasn't gone beyond the inner loop song
+                            if (tempArtistGapBehind > 0)
+                            {
+                                songFittingGapNeeds.tempArtistGapBehindFromSelectedSongToThisSong = tempArtistGapBehind;
+                                //atLeastTwoOccurancesOFArtistFound = true;
+                            }
+                            else if (songFittingGapNeeds.Position > thisSongFromAllSong.Position) //if (atLeastTwoOccurancesOFArtistFound == true)
+                            {
+                                // the outer song loop has passed the position of the inner song loop so...
+                                // now calculate songFittingGapNeeds.tempArtistGapAheadFromSelectedSongToNextOccuranceOfArtist
+                            }
+
+                        }
+
+                    }
+
+                    //foreach (var songFittingGapNeeds in songsFittingGapNeeds)
+                    //{
+
+                    //    var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position)
+                    //                                                            .OrderBy(sng2 => sng2.FileName);    //orderby is critical
+
+                    //    //tests below...
+
+                    //    //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position - artistGapRequested)
+                    //    //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
+
+                    //    //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > positionOfPreviousOccuranceOfArtist)
+                    //    //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
+
+                    //    foreach (var thisSongFromAllSong in allSongsStartingAtGapNeedsPostion)
+                    //    {
+
+                    //        if (thisSongFromAllSong.Artist == selectedSong.Artist)
+                    //        {
+
+                    //            gapToNextOccuranceOfArtist = thisSongFromAllSong.Position - songFittingGapNeeds.Position;
+                    //            gapFromPreviousOccuranceOfArtist = songFittingGapNeeds.Position - positionOfPreviousOccuranceOfArtist;
+
+                    //            if (gapToNextOccuranceOfArtist >= artistGapRequested)
+                    //            {
+                    //                if (gapFromPreviousOccuranceOfArtist >= artistGapRequested)
+                    //                {
+                    //                    msg += songFittingGapNeeds.FileName + ", gapFromArtist: " + gapFromPreviousOccuranceOfArtist + ", gapToArtist: " + gapToNextOccuranceOfArtist + ", nextOccuranceOfArtistPosition: " + thisSongFromAllSong.Position + ", GenreGapAhead: " + songFittingGapNeeds.GenreGapAhead + Environment.NewLine;
+                    //                }
+                    //            }
+
+                    //            positionOfPreviousOccuranceOfArtist = thisSongFromAllSong.Position;
+
+                    //            break;
+                    //        }
+                    //    }
+
+                    //}
+
+                    if (msg.Length < 1999)
+                    {
+                        System.Windows.MessageBox.Show(msg);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 1999));
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void RepositionSongOLD()
+        {
             SongFileInfo selectedSong;
 
             try
@@ -389,7 +550,7 @@ namespace MindTheGap
 
                             if (thisSongFromAllSong.Artist == selectedSong.Artist)
                             {
-                                
+
                                 gapToNextOccuranceOfArtist = thisSongFromAllSong.Position - songFittingGapNeeds.Position;
                                 gapFromPreviousOccuranceOfArtist = songFittingGapNeeds.Position - positionOfPreviousOccuranceOfArtist;
 
@@ -424,10 +585,6 @@ namespace MindTheGap
             {
                 throw;
             }
-
-
-
-
         }
 
         //private static void GetGapToNextOccurranceOfThisTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
