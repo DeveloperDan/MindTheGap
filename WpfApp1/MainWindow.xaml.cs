@@ -420,7 +420,7 @@ namespace MindTheGap
                         combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingArtistGapNeeds);
                     }
 
-                   var combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.OrderBy(sng => sng.FileName).ToList();
+                    var combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.OrderBy(sng => sng.FileName).ToList();
 
                     //++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -467,8 +467,11 @@ namespace MindTheGap
                     if (combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.FirstOrDefault().Genre != selectedSong.Genre)
                     {
                         var firstInstanceOfGenre = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.FirstOrDefault(sng => sng.Genre == selectedSong.Genre);
-                        var rangeOfSongsCombinedFromFirstFittingGenreGapNeeds = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfGenre.Position - genreGapRequested);
-                        combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
+                        if (firstInstanceOfGenre != null)
+                        {
+                            var rangeOfSongsCombinedFromFirstFittingGenreGapNeeds = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfGenre.Position - genreGapRequested);
+                            combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
+                        }
                     }
 
                     combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.OrderBy(sng => sng.FileName).ToList();
@@ -479,7 +482,7 @@ namespace MindTheGap
 
                     foreach (var songFittingArtistTitleAndGenreNeeds in combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted)
                     {
-                        msg += songFittingArtistTitleAndGenreNeeds.FileName + ", pos: " + songFittingArtistTitleAndGenreNeeds.Position + " (gaps meaningless from this song) " + Environment.NewLine;  //, artistGapAhead: " + songFittingArtistTitleAndGenreNeeds.ArtistGapAhead + ", titleGapAhead: " + songFittingArtistTitleAndGenreNeeds.TitleGapAhead + ", GenreGapAhead: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + Environment.NewLine;
+                        msg += songFittingArtistTitleAndGenreNeeds.FileName + ", pos: " + songFittingArtistTitleAndGenreNeeds.Position + ", genre gap: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + " (other gaps meaningless from this song) " + Environment.NewLine;  //, artistGapAhead: " + songFittingArtistTitleAndGenreNeeds.ArtistGapAhead + ", titleGapAhead: " + songFittingArtistTitleAndGenreNeeds.TitleGapAhead + ", GenreGapAhead: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + Environment.NewLine;
                     }
 
                     if (msg.Trim() == String.Empty)
@@ -624,9 +627,9 @@ namespace MindTheGap
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                System.Windows.MessageBox.Show(ex.ToString());
             }
         }
 
