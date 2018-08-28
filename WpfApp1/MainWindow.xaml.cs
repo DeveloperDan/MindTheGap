@@ -59,18 +59,24 @@ namespace MindTheGap
 
                 ///////
 
-                if (1 == 2) // show ten chars result in lower right grid
-                {
-                    var songsBySmallestArtistTenCharsGap = songList.OrderBy(sng => sng.ArtistGapTenChars).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapTenChars > 0);
+                //if (1 == 2) // show ten chars result in lower right grid
+                //{
+                //    var songsBySmallestArtistTenCharsGap = songList.OrderBy(sng => sng.ArtistGapTenChars).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapTenChars > 0);
 
-                    SongsByArtistCountGrid.ItemsSource = songsBySmallestArtistTenCharsGap;
-                }
-                else // show sorted by artist count in lower right grid
-                {
-                    var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng => sng.ArtistGapAhead);
+                //    GridThree.ItemsSource = songsBySmallestArtistTenCharsGap;
+                //}
+                //else // show sorted by artist count in lower right grid
+                //{
+                //    var songsByArtistCount = songList.OrderByDescending(sng => sng.ArtistCount).ThenBy(sng => sng.ArtistGapAhead);
 
-                    SongsByArtistCountGrid.ItemsSource = songsByArtistCount;
-                }
+                //    GridThree.ItemsSource = songsByArtistCount;
+                //}
+
+                var songsByTitleGapZeroAndUp = songList.Where(sng => sng.TitleGapAhead >= 0).OrderBy(sng => sng.TitleGapAhead);
+                GridThree.ItemsSource = songsByTitleGapZeroAndUp;
+
+
+
             }
             catch (Exception ex)
             {
@@ -370,18 +376,36 @@ namespace MindTheGap
                     //     sng.TitleGapAhead >= titleGapRequested &&
                     //   sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
+                    //Do Title Gap work...+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
                     // Get the handful of songs having a matching title and titleGapAhead
-                    var songsFittingTitleGapNeedsMinusFirstSongsSorted = allSongsListSorted.Where(sng => sng.TitleGapAhead >= titleGapRequested &&
-                                                                                            sng.Title == selectedSong.Title).ToList().OrderBy(sng2 => sng2.FileName);  //orderby is critical                                                           
 
-                    List<SongFileInfo> combinedRangesOfSongsQualifyingAsTitleInsertLocations = new List<SongFileInfo>();
+                    IOrderedEnumerable<SongFileInfo> songsFitting_Title_GapNeedsMinusFirstSongsSorted;
 
-                    foreach (var songFittingTitleGapNeeds in songsFittingTitleGapNeedsMinusFirstSongsSorted)
+                    if (allSongsListSorted.FirstOrDefault(sng => sng.Title == selectedSong.Title) != null)
+                    {   // The wanted title exists. 
+                        // Get the handfull of songs with this title
+                        // This list is missing all songs leading up to the first instance of the title
+                        songsFitting_Title_GapNeedsMinusFirstSongsSorted = allSongsListSorted.Where(sng => sng.TitleGapAhead >= titleGapRequested &&
+                                                                                                sng.Title == selectedSong.Title).ToList().OrderBy(sng2 => sng2.FileName);  //orderby is critical                                                           
+                    }
+                    else
+                    {   // The title does not even exist
+                        // keep all songs since there's not title gap anywhere
+                        songsFitting_Title_GapNeedsMinusFirstSongsSorted = allSongsListSorted;
+                    }
+
+
+                    // From the handful of songs with the title and gap needs
+                    // get the range of songs that are beyond the title gap needs
+                    List<SongFileInfo> combinedRangesOfSongsQualifyingAs_Title_InsertLocations = new List<SongFileInfo>();
+
+                    foreach (var songFittingTitleGapNeeds in songsFitting_Title_GapNeedsMinusFirstSongsSorted)
                     {
                         var rangeOfSongsQualifyingAsInsertLocations = allSongsListSorted.Where(sng => sng.Position > songFittingTitleGapNeeds.Position + titleGapRequested &&
                                                                                             sng.Position < songFittingTitleGapNeeds.NextOccuranceOfTitleIsAt - titleGapRequested);
 
-                        combinedRangesOfSongsQualifyingAsTitleInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
+                        combinedRangesOfSongsQualifyingAs_Title_InsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
                     }
 
                     // add a range of songs from the first song to the first of the selected title 
@@ -390,99 +414,110 @@ namespace MindTheGap
                     {
                         var firstInstanceOfTitle = allSongsListSorted.FirstOrDefault(sng => sng.Title == selectedSong.Title);
                         var rangeOfSongsFromFirstFittingTitleGapNeeds = allSongsListSorted.Where(sng => sng.Position < firstInstanceOfTitle.Position - titleGapRequested);
-                        combinedRangesOfSongsQualifyingAsTitleInsertLocations.AddRange(rangeOfSongsFromFirstFittingTitleGapNeeds);
+                        combinedRangesOfSongsQualifyingAs_Title_InsertLocations.AddRange(rangeOfSongsFromFirstFittingTitleGapNeeds);
                     }
 
-                    var combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted = combinedRangesOfSongsQualifyingAsTitleInsertLocations.OrderBy(sng => sng.FileName).ToList();
+                    IOrderedEnumerable<SongFileInfo> combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted = combinedRangesOfSongsQualifyingAs_Title_InsertLocations.OrderBy(sng => sng.FileName);
 
-                    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                    //Do Artist Gap work...++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                     // Get the handful of songs having a matching artist and artistGapAhead
-                    var songsFittingArtistGapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted.Where(sng => sng.ArtistGapAhead >= artistGapRequested &&
-                                                                        sng.Artist == selectedSong.Artist).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
-                    List<SongFileInfo> combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations = new List<SongFileInfo>();
-
-                    foreach (var songFittingArtistGapNeeds in songsFittingArtistGapNeedsMinusFirstSongsSorted)
+                    IOrderedEnumerable<SongFileInfo> songsFitting_Artist_GapNeedsMinusFirstSongsSorted;
+                    List<SongFileInfo> combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations = new List<SongFileInfo>();
+                    
+                    if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault(sng => sng.Artist == selectedSong.Artist) != null)
                     {
-                        var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted.Where(sng => sng.Position > songFittingArtistGapNeeds.Position + artistGapRequested &&
-                                                                                            sng.Position < songFittingArtistGapNeeds.NextOccuranceOfArtistIsAt - artistGapRequested);
+                        songsFitting_Artist_GapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.Where(sng => sng.ArtistGapAhead >= artistGapRequested &&
+                                                                            sng.Artist == selectedSong.Artist).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
-                        combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
+                        foreach (var songFittingArtistGapNeeds in songsFitting_Artist_GapNeedsMinusFirstSongsSorted)
+                        {
+                            var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.Where(sng => sng.Position > songFittingArtistGapNeeds.Position + artistGapRequested &&
+                                                                                                sng.Position < songFittingArtistGapNeeds.NextOccuranceOfArtistIsAt - artistGapRequested);
+
+                            combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
+                        }
+
                     }
+                    else
+                    {   // The artist does not even exist so use what was found during the title gap search
+                        combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.ToList();
+                    }
+
+
 
                     // add a range of songs from the first song to the first of the selected artist 
                     // (if gap need is satisfied and first song is not the selected artist)
-                    if (combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted.FirstOrDefault().Artist != selectedSong.Artist)
+                    if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault().Artist != selectedSong.Artist)
                     {
-                        var firstInstanceOfArtist = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted.FirstOrDefault(sng => sng.Artist == selectedSong.Artist);
-                        var rangeOfSongsCombinedFromFirstFittingArtistGapNeeds = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfArtist.Position - artistGapRequested);
-                        combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingArtistGapNeeds);
+
+                        var firstInstanceOfArtist = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault(sng => sng.Artist == selectedSong.Artist);
+                        if (firstInstanceOfArtist != null)
+                        {
+                            var rangeOfSongsCombinedFromFirstFitting_Artist_GapNeeds = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfArtist.Position - artistGapRequested);
+                            combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations.AddRange(rangeOfSongsCombinedFromFirstFitting_Artist_GapNeeds);
+                        }
                     }
 
-                    var combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleInsertLocations.OrderBy(sng => sng.FileName).ToList();
+                    var combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations.OrderBy(sng => sng.FileName).ToList();
 
-                    //++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    //Do Genre Gap work...++++++++++++++++++++++++++++++++++++++++++++++++
 
                     // Get the handful of songs having a matching genre and genreGapAhead
-                    var songsFittingGenreGapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
+                    var songsFittingGenreGapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
                                                                         sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
                     List<SongFileInfo> combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations = new List<SongFileInfo>();
 
-                    foreach (var songFittingGenreGapNeeds in songsFittingGenreGapNeedsMinusFirstSongsSorted)
+
+                    if (songsFittingGenreGapNeedsMinusFirstSongsSorted != null)
                     {
-                        //var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position + genreGapRequested &&
-                        //                                                                    sng.Position < songFittingGenreGapNeeds.NextOccuranceOfGenreIsAt - genreGapRequested);
-
-                        //IMPORTANT: Genre gap needs differ from artist and title gap needs!!!
-                        //For Genre gap we want any range with a gap greater than the requested genre gap
-                        // (we do NOT add and subtract the genreGapRequested from either end when searching for the range)
-                        // Get songs between (and not including) the current song location and the next occurance of the genre location
-                        // but only get this range if the GenreGapAhead is greater than the genreGapRequested
-                        var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position && sng.Position < songFittingGenreGapNeeds.NextOccuranceOfGenreIsAt && songFittingGenreGapNeeds.GenreGapAhead >= genreGapRequested);
-
-                        combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
-                    }
-
-                    // add a range of songs from the first song to the first of the selected genre 
-                    // (if gap need is satisfied and first song is not the selected genre)
-                    if (combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.FirstOrDefault().Genre != selectedSong.Genre)
-                    {
-                        var firstInstanceOfGenre = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.FirstOrDefault(sng => sng.Genre == selectedSong.Genre);
-                        if (firstInstanceOfGenre != null)
+                        foreach (var songFittingGenreGapNeeds in songsFittingGenreGapNeedsMinusFirstSongsSorted)
                         {
-                            var rangeOfSongsCombinedFromFirstFittingGenreGapNeeds = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfGenre.Position - genreGapRequested);
-                            combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
+                            //var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position + genreGapRequested &&
+                            //                                                                    sng.Position < songFittingGenreGapNeeds.NextOccuranceOfGenreIsAt - genreGapRequested);
+
+                            //IMPORTANT: Genre gap needs differ from artist and title gap needs!!!
+                            //For Genre gap we want any range with a gap greater than the requested genre gap
+                            // (we do NOT add and subtract the genreGapRequested from either end when searching for the range)
+                            // Get songs between (and not including) the current song location and the next occurance of the genre location
+                            // but only get this range if the GenreGapAhead is greater than the genreGapRequested
+                            var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position && sng.Position < songFittingGenreGapNeeds.NextOccuranceOfGenreIsAt && songFittingGenreGapNeeds.GenreGapAhead >= genreGapRequested);
+
+                            combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
                         }
                     }
+                    // add a range of songs from the first song to the first of the selected genre 
+                    // (if gap need is satisfied and first song is not the selected genre)
+                    if (combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.FirstOrDefault() != null)
+                    {
+                        if (combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.FirstOrDefault().Genre != selectedSong.Genre)
+                        {
+                            var firstInstanceOfGenre = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.FirstOrDefault(sng => sng.Genre == selectedSong.Genre);
+                            if (firstInstanceOfGenre != null)
+                            {
+                                var rangeOfSongsCombinedFromFirstFittingGenreGapNeeds = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfGenre.Position - genreGapRequested);
+                                combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
+                            }
+                        }
+                    }
+                    combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.OrderBy(sng => sng.FileName).ToList();
 
-                    combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.OrderBy(sng => sng.FileName).ToList();
+                    //Show message: ++++++++++++++++++++++++++++++++++++++++++++++++
 
-                    //++++++++++++++++++++++++++++++++++++++++++++++++
+
+                    GridThree.ItemsSource = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations;
 
                     string msg = string.Empty;
 
-                    foreach (var songFittingArtistTitleAndGenreNeeds in combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted)
+                    foreach (var songFittingArtistTitleAndGenreNeeds in combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted)
                     {
                         msg += songFittingArtistTitleAndGenreNeeds.FileName + ", pos: " + songFittingArtistTitleAndGenreNeeds.Position + ", genre gap: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + " (other gaps meaningless from this song) " + Environment.NewLine;  //, artistGapAhead: " + songFittingArtistTitleAndGenreNeeds.ArtistGapAhead + ", titleGapAhead: " + songFittingArtistTitleAndGenreNeeds.TitleGapAhead + ", GenreGapAhead: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + Environment.NewLine;
+                        if (msg.Length > 2001)
+                        {
+                            break;
+                        }
                     }
 
                     if (msg.Trim() == String.Empty)
@@ -502,9 +537,9 @@ namespace MindTheGap
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                System.Windows.MessageBox.Show(ex.ToString());
             }
         }
 

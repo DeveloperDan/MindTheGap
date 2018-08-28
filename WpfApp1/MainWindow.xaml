@@ -29,12 +29,12 @@
 
         <DataGrid x:Name="GridTwo" HorizontalAlignment="Left" Height="182" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="185" Margin="10,78,0,0" VerticalAlignment="Top" Width="656"/>
-        <DataGrid x:Name="SongsByArtistCountGrid" HorizontalAlignment="Left" Height="205" Margin="10,326,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="GridThree" HorizontalAlignment="Left" Height="205" Margin="10,326,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="205" Margin="701,326,0,0" VerticalAlignment="Top" Width="656"/>
         <Label Content="Sorted by Title" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>
         <Label Content="Sorted by Artist then Position" HorizontalAlignment="Left" VerticalAlignment="Top" Width="202" Margin="701,55,0,0"/>
         <Label Content="Sorted by Artist Gap (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="436" Margin="701,295,0,0"/>
-        <Label Content="Sorted by Artist Count OR Artist Gap Ten Chars (blank grid means only unique artists exist)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="562" Margin="26,295,0,0"/>
+        <Label Content="Grid Three by Title Gap Ahead &gt; 0 before reposition then by found insert locations after reposition&#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="640" Margin="26,295,0,0"/>
         <Button x:Name="RepositionGridFourSelectionButton" Content="Reposition Selected Song" HorizontalAlignment="Left" Margin="518,52,0,0" VerticalAlignment="Top" Width="148" Click="RepositionGridFourSelectionButton_Click"/>
         <CheckBox x:Name="UpdateMusicFilePositionCheckbox" Content="Update music file track with playlist (sort) position" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TitleGapTextBox" HorizontalAlignment="Left" Height="20" Margin="417,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="40" RenderTransformOrigin="-0.69,0.45" Text="22"/>
