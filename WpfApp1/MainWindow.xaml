@@ -28,7 +28,7 @@
         <!--</StackPanel>-->
 
         <DataGrid x:Name="GridTwo" HorizontalAlignment="Left" Height="182" Margin="701,81,0,0" VerticalAlignment="Top" Width="656"/>
-        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="185" Margin="10,78,0,0" VerticalAlignment="Top" Width="656"/>
+        <DataGrid x:Name="SongsByTitleThenArtistGrid" HorizontalAlignment="Left" Height="185" Margin="10,78,0,0" VerticalAlignment="Top" Width="656" BeginningEdit="SongsByTitleThenArtistGrid_BeginningEdit"/>
         <DataGrid x:Name="GridThree" HorizontalAlignment="Left" Height="205" Margin="10,326,0,0" VerticalAlignment="Top" Width="656"/>
         <DataGrid x:Name="SongsBySmallestArtistGapGrid" HorizontalAlignment="Left" Height="205" Margin="701,326,0,0" VerticalAlignment="Top" Width="656"/>
         <Label Content="Sorted by Title" HorizontalAlignment="Left" Margin="26,52,0,0" VerticalAlignment="Top" Width="143"/>

@@ -18,16 +18,16 @@ namespace MindTheGap
         public int TitleCount { get; set; }
         public int TitleGapAhead { get; set; }
 
-        public int ArtistGapTenChars { get; set; }
+        //public int ArtistGapTenChars { get; set; }
         public int Position { get; set; }
         public int NextOccuranceOfArtistIsAt { get; set; }
-        public int NextOccuranceOfArtistTenCharsIsAt { get; set; }
+        //public int NextOccuranceOfArtistTenCharsIsAt { get; set; }
         public int ArtistGapBehind { get; set; }
         
 
-        public int TitleGapTenChars { get; set; }
+        //public int TitleGapTenChars { get; set; }
         public int NextOccuranceOfTitleIsAt { get; set; }
-        public int NextOccuranceOfTitleTenCharsIsAt { get; set; }
+        //public int NextOccuranceOfTitleTenCharsIsAt { get; set; }
         public int TitleGapBehind { get; set; }
         
 

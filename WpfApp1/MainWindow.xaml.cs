@@ -40,7 +40,7 @@ namespace MindTheGap
                 List<SongFileInfo> songList = PraseFileNamesIntoSongList(musicFilePathsList);
 
                 var songsByTitleThenArtist = songList.OrderBy(sng => sng.Title).ThenBy(sng => sng.Artist);
-                SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist;
+                SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist.ToList();
 
                 var songsByFileName = songList.OrderBy(sng => sng.FileName);
 
@@ -48,13 +48,13 @@ namespace MindTheGap
                 CalculateGapsToSameArtistAndTitle(songsByFileName);
 
                 var songsBySmallestArtistGap = songList.OrderBy(sng => sng.ArtistGapAhead).ThenBy(sng => sng.Title).Where(sng => sng.ArtistGapAhead > 0);
-                SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap;
+                SongsBySmallestArtistGapGrid.ItemsSource = songsBySmallestArtistGap.ToList();
 
                 //var songsByTitleGap = songList.OrderBy(sng => sng.TitleGap);
                 //GridTwo.ItemsSource = songsByTitleGap;
 
                 var songsByArtistThenArtistGapAhead = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.ArtistGapAhead);
-                GridTwo.ItemsSource = songsByArtistThenArtistGapAhead;
+                GridTwo.ItemsSource = songsByArtistThenArtistGapAhead.ToList();
 
 
                 ///////
@@ -223,17 +223,17 @@ namespace MindTheGap
                 song.ArtistGapAhead = artistGap;
 
 
-                try
-                {
-                    var nextArtistOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
-                    song.ArtistGapTenChars = nextArtistOccuranceTenCharsIndex - currentIndex;
+                //try
+                //{
+                //    var nextArtistOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Artist.Substring(0, 10) == song.Artist.Substring(0, 10));
+                //    song.ArtistGapTenChars = nextArtistOccuranceTenCharsIndex - currentIndex;
 
-                }
-                catch (Exception ex)
-                {
+                //}
+                //catch (Exception ex)
+                //{
 
-                    //swallow the error
-                }
+                //    //swallow the error
+                //}
 
                 song.ArtistCount = (from sng in songListByFileName
                                     where sng.Artist == song.Artist
@@ -259,17 +259,17 @@ namespace MindTheGap
 
                 song.TitleGapAhead = titleGap;
 
-                try
-                {
-                    var nextTitleOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Title.Substring(0, 10) == song.Title.Substring(0, 10));
-                    song.TitleGapTenChars = nextTitleOccuranceTenCharsIndex - currentIndex;
+                //try
+                //{
+                //    var nextTitleOccuranceTenCharsIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Title.Substring(0, 10) == song.Title.Substring(0, 10));
+                //    song.TitleGapTenChars = nextTitleOccuranceTenCharsIndex - currentIndex;
 
-                }
-                catch (Exception ex)
-                {
+                //}
+                //catch (Exception ex)
+                //{
 
-                    //swallow the error
-                }
+                //    //swallow the error
+                //}
 
                 song.TitleCount = (from sng in songListByFileName
                                    where sng.Title == song.Title
@@ -567,6 +567,33 @@ namespace MindTheGap
                     {
                         System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 1999));
                     }
+
+
+                    try
+                    {
+                        //https://stackoverflow.com/a/30981377/381082
+                        var songs = new List<string>();
+                        foreach (var song in songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations)
+                        {
+                            songs.Add(song.FileName);
+                        }
+
+                        var common = new string(songs.Select(str => str.TakeWhile((c, index) => songs.All(s => s[index] == c)))
+                                                       .FirstOrDefault().ToArray());
+
+                        if (common.Trim().Length > 0)
+                        {
+                            System.Windows.MessageBox.Show("Common titles: " + common);
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        //throw;
+                    }
+
+
+
                 }
 
             }
@@ -737,6 +764,11 @@ namespace MindTheGap
             {
                 System.Windows.MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void SongsByTitleThenArtistGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            e.Cancel = true;
         }
 
         //private static void GetGapToNextOccurranceOfThisTitle(IOrderedEnumerable<SongFileInfo> songsByTitleThenArtist_IOrderedEnumerable)
