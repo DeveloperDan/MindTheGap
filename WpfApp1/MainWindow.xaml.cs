@@ -53,8 +53,8 @@ namespace MindTheGap
                 //var songsByTitleGap = songList.OrderBy(sng => sng.TitleGap);
                 //GridTwo.ItemsSource = songsByTitleGap;
 
-                var songsByArtistThenPosition = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.Position);
-                GridTwo.ItemsSource = songsByArtistThenPosition;
+                var songsByArtistThenArtistGapAhead = songList.OrderBy(sng => sng.Artist).ThenBy(sng => sng.ArtistGapAhead);
+                GridTwo.ItemsSource = songsByArtistThenArtistGapAhead;
 
 
                 ///////
@@ -211,6 +211,15 @@ namespace MindTheGap
 
                 int artistGap = song.NextOccuranceOfArtistIsAt - (currentIndex + 1);
 
+                if (artistGap < 0)
+                {
+                    // a negative artistGap means we've reached that last occurance of the artist
+                    // set the artistGap to a big number (about the distance from the current song to the last song)
+                    // set the next occurance of artist to the song list count
+                    artistGap = songListByFileName.Count() - (currentIndex + 1);
+                    song.NextOccuranceOfArtistIsAt = songListByFileName.Count();
+                }
+
                 song.ArtistGapAhead = artistGap;
 
 
@@ -238,6 +247,16 @@ namespace MindTheGap
                 song.NextOccuranceOfTitleIsAt = nextTitleOccuranceIndex + 1;
 
                 var titleGap = nextTitleOccuranceIndex - (currentIndex + 1);
+
+                if (titleGap < 0)
+                {
+                    // a negative titleGap means we've reached that last occurance of the title
+                    // set the titleGap to a big number (about the distance from the current song to the last song)
+                    // set the next occurance of title to the song list count
+                    titleGap = songListByFileName.Count() - (currentIndex + 1);
+                    song.NextOccuranceOfTitleIsAt = songListByFileName.Count();
+                }
+
                 song.TitleGapAhead = titleGap;
 
                 try
@@ -383,8 +402,8 @@ namespace MindTheGap
                     IOrderedEnumerable<SongFileInfo> songsFitting_Title_GapNeedsMinusFirstSongsSorted;
 
                     if (allSongsListSorted.FirstOrDefault(sng => sng.Title == selectedSong.Title) != null)
-                    {   // The wanted title exists. 
-                        // Get the handfull of songs with this title
+                    {   // The wanted title exists so title gap needs to be tested. 
+                        // Get the handfull of songs with this title that have a title gap greater that the requested title gap
                         // This list is missing all songs leading up to the first instance of the title
                         songsFitting_Title_GapNeedsMinusFirstSongsSorted = allSongsListSorted.Where(sng => sng.TitleGapAhead >= titleGapRequested &&
                                                                                                 sng.Title == selectedSong.Title).ToList().OrderBy(sng2 => sng2.FileName);  //orderby is critical                                                           
@@ -425,7 +444,7 @@ namespace MindTheGap
 
                     IOrderedEnumerable<SongFileInfo> songsFitting_Artist_GapNeedsMinusFirstSongsSorted;
                     List<SongFileInfo> combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations = new List<SongFileInfo>();
-                    
+
                     if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault(sng => sng.Artist == selectedSong.Artist) != null)
                     {
                         songsFitting_Artist_GapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.Where(sng => sng.ArtistGapAhead >= artistGapRequested &&
@@ -468,7 +487,7 @@ namespace MindTheGap
                     var songsFittingGenreGapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
                                                                         sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
-                    List<SongFileInfo> combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations = new List<SongFileInfo>();
+                    List<SongFileInfo> songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations = new List<SongFileInfo>();
 
 
                     if (songsFittingGenreGapNeedsMinusFirstSongsSorted != null)
@@ -485,10 +504,22 @@ namespace MindTheGap
                             // but only get this range if the GenreGapAhead is greater than the genreGapRequested
                             var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position && sng.Position < songFittingGenreGapNeeds.NextOccuranceOfGenreIsAt && songFittingGenreGapNeeds.GenreGapAhead >= genreGapRequested);
 
-                            combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
+
+                            if (rangeOfSongsQualifyingAsInsertLocations != null)
+                            {
+                                // the above insert locations are 1, 2, 3 or more songs in a row with the same genre. Pick one in the middle.
+                                int whichSongIndex = rangeOfSongsQualifyingAsInsertLocations.Count() / 2;
+                                var songMeetingArtistTitleAndGenreNeeds = rangeOfSongsQualifyingAsInsertLocations.ElementAtOrDefault(whichSongIndex - 1);
+
+                                //was: combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsQualifyingAsInsertLocations);
+                                if (songMeetingArtistTitleAndGenreNeeds != null)
+                                {
+                                    songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.Add(songMeetingArtistTitleAndGenreNeeds);
+                                }
+                            }
                         }
                     }
-                    // add a range of songs from the first song to the first of the selected genre 
+                    // NOTE: FOR GENRE THIS MAY BE A TINY RANGE: add a range of songs from the first song to the first of the selected genre 
                     // (if gap need is satisfied and first song is not the selected genre)
                     if (combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.FirstOrDefault() != null)
                     {
@@ -498,20 +529,22 @@ namespace MindTheGap
                             if (firstInstanceOfGenre != null)
                             {
                                 var rangeOfSongsCombinedFromFirstFittingGenreGapNeeds = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.Position < firstInstanceOfGenre.Position - genreGapRequested);
-                                combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
+                                songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.AddRange(rangeOfSongsCombinedFromFirstFittingGenreGapNeeds);
                             }
                         }
                     }
-                    combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations.OrderBy(sng => sng.FileName).ToList();
+                    //was: combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.OrderBy(sng => sng.FileName).ToList();
+
+                    var songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.OrderBy(sng => sng.FileName).ToList();
 
                     //Show message: ++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-                    GridThree.ItemsSource = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocations;
+                    GridThree.ItemsSource = songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations;
 
                     string msg = string.Empty;
 
-                    foreach (var songFittingArtistTitleAndGenreNeeds in combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted)
+                    foreach (var songFittingArtistTitleAndGenreNeeds in songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted)
                     {
                         msg += songFittingArtistTitleAndGenreNeeds.FileName + ", pos: " + songFittingArtistTitleAndGenreNeeds.Position + ", genre gap: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + " (other gaps meaningless from this song) " + Environment.NewLine;  //, artistGapAhead: " + songFittingArtistTitleAndGenreNeeds.ArtistGapAhead + ", titleGapAhead: " + songFittingArtistTitleAndGenreNeeds.TitleGapAhead + ", GenreGapAhead: " + songFittingArtistTitleAndGenreNeeds.GenreGapAhead + Environment.NewLine;
                         if (msg.Length > 2001)
@@ -660,6 +693,44 @@ namespace MindTheGap
                         System.Windows.MessageBox.Show("List too long to display all: " + msg.Substring(0, 1999));
                     }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void RenameSelectedSongButton_Click(object sender, RoutedEventArgs e)
+        {
+            SongFileInfo selectedSong;
+            SongFileInfo sortAlphabeticallyAfterThisSong;
+
+            try
+            {
+                selectedSong = (SongFileInfo)SongsByTitleThenArtistGrid.SelectedItem;
+
+                if (selectedSong == null)
+                {
+                    System.Windows.MessageBox.Show("No song selected from grid one.");
+                    return;
+                }
+
+                System.Windows.MessageBox.Show("Song to rename: " + selectedSong.FileName);
+
+
+                sortAlphabeticallyAfterThisSong = (SongFileInfo)GridThree.SelectedItem;
+
+                if (sortAlphabeticallyAfterThisSong == null)
+                {
+                    System.Windows.MessageBox.Show("No song selected from grid three.");
+                    return;
+                }
+
+                System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortAlphabeticallyAfterThisSong.FileName);
+
+
+
 
             }
             catch (Exception ex)
