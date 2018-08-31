@@ -733,6 +733,11 @@ namespace MindTheGap
             // TODO: alphabetically insert selected song in the correct position
             // Try These:
             // https://stackoverflow.com/a/15303016/381082
+            // see also: http://www.rohland.co.za/index.php/2009/10/31/csharp-html-diff-algorithm/
+            // and: https://www.codeproject.com/Articles/13326/An-O-ND-Difference-Algorithm-for-C
+            // and: https://stackoverflow.com/questions/3343874/compare-two-strings-and-get-the-difference
+            // and: 
+
 
 
 
@@ -791,6 +796,10 @@ namespace MindTheGap
         public void CompareStringsTest(string attempted, string correct, string expectedResult)
         {
             // from: https://stackoverflow.com/a/15303016/381082
+            // see also: http://www.rohland.co.za/index.php/2009/10/31/csharp-html-diff-algorithm/
+            // and: https://www.codeproject.com/Articles/13326/An-O-ND-Difference-Algorithm-for-C
+            // and: https://stackoverflow.com/questions/3343874/compare-two-strings-and-get-the-difference
+            // and: 
 
             int first = -1, last = -1;
 
