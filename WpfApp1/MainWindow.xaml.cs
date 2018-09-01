@@ -42,6 +42,7 @@ namespace MindTheGap
                 var songsByTitleThenArtist = songList.OrderBy(sng => sng.Title).ThenBy(sng => sng.Artist);
                 SongsByTitleThenArtistGrid.ItemsSource = songsByTitleThenArtist.ToList();
 
+
                 var songsByFileName = songList.OrderBy(sng => sng.FileName);
 
                 //was: CalculateGapsToSameArtistAndTitle(songsByTitleThenArtist);
@@ -294,22 +295,34 @@ namespace MindTheGap
                     }
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                System.Windows.MessageBox.Show(ex.ToString());
 
-                    throw;
+                    //throw;
                 }
 
                 // Get Genre gap +++++++++++++++++++++++++++++
 
+                try 
+	{	        
+	
                 //https://stackoverflow.com/a/38822432/381082
-                var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre.ToUpper() == song.Genre.ToUpper());
+                var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre?.ToUpper() == song.Genre?.ToUpper());
+
+     
 
                 song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
 
                 var genreGap = nextGenreOccuranceIndex - (currentIndex + 1);
                 song.GenreGapAhead = genreGap;
+                                   	
+	}
+	catch (Exception ex)
+	{
 
+		                System.Windows.MessageBox.Show(ex.ToString());
+	}
                 previousTitle = song.Title;
                 previousArtist = song.Artist;
             }
@@ -766,6 +779,15 @@ namespace MindTheGap
                 }
 
                 System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortAlphabeticallyAfterThisSong.FileName);
+
+                    List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
+          
+                var nextSong = allSongsList.Where(sng => sng.Position == sng.Position + 1 ).FirstOrDefault();
+
+                System.Windows.MessageBox.Show("Next song: " + nextSong.FileName);
+
+
+
 
 
 
