@@ -743,7 +743,7 @@ namespace MindTheGap
 
         private void RenameSelectedSongButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: alphabetically insert selected song in the correct position
+            // TODO: alphabetically insert selected song in the secondSongName position
             // Try These:
             // https://stackoverflow.com/a/15303016/381082
             // see also: http://www.rohland.co.za/index.php/2009/10/31/csharp-html-diff-algorithm/
@@ -751,11 +751,8 @@ namespace MindTheGap
             // and: https://stackoverflow.com/questions/3343874/compare-two-strings-and-get-the-difference
             // and: 
 
-
-
-
             SongFileInfo selectedSong;
-            SongFileInfo sortAlphabeticallyAfterThisSong;
+            SongFileInfo sortSelectedSongAlphabeticallyAfterThisSong;
 
             try
             {
@@ -770,26 +767,26 @@ namespace MindTheGap
                 System.Windows.MessageBox.Show("Song to rename: " + selectedSong.FileName);
 
 
-                sortAlphabeticallyAfterThisSong = (SongFileInfo)GridThree.SelectedItem;
+                sortSelectedSongAlphabeticallyAfterThisSong = (SongFileInfo)GridThree.SelectedItem;
 
-                if (sortAlphabeticallyAfterThisSong == null)
+                if (sortSelectedSongAlphabeticallyAfterThisSong == null)
                 {
                     System.Windows.MessageBox.Show("No song selected from grid three.");
                     return;
                 }
 
-                System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortAlphabeticallyAfterThisSong.FileName);
+                System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortSelectedSongAlphabeticallyAfterThisSong.FileName);
 
                     List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
           
-                var nextSong = allSongsList.Where(sng => sng.Position == sng.Position + 1 ).FirstOrDefault();
+                var nextSong = allSongsList.Where(sng => sng.Position == sortSelectedSongAlphabeticallyAfterThisSong.Position + 1 ).FirstOrDefault();
 
                 System.Windows.MessageBox.Show("Next song: " + nextSong.FileName);
 
 
+                string newSongName = GetNewSongFileNameSmushedAlphabeticallyBetweenTwoSongNames(sortSelectedSongAlphabeticallyAfterThisSong.FileName, nextSong.FileName, selectedSong.FileName);
 
-
-
+                System.Windows.MessageBox.Show("New song name: " + newSongName);
 
 
             }
@@ -815,7 +812,7 @@ namespace MindTheGap
         //[TestCase("inactioned", "inaction", "inaction[ed]")]
         //[TestCase("refraction", "fraction", "[re]fraction")]
         //[TestCase("adiction", "ad[]diction", "ad[]iction")]
-        public void CompareStringsTest(string attempted, string correct, string expectedResult)
+        public string GetNewSongFileNameSmushedAlphabeticallyBetweenTwoSongNames(string firstSongName, string secondSongName, string songToRename)
         {
             // from: https://stackoverflow.com/a/15303016/381082
             // see also: http://www.rohland.co.za/index.php/2009/10/31/csharp-html-diff-algorithm/
@@ -824,14 +821,17 @@ namespace MindTheGap
             // and: 
 
             int first = -1, last = -1;
+            string beforeOpeningBrace = string.Empty;
+            string withinBraces = string.Empty;
+            string afterClosingBrace = string.Empty;
 
             string result = null;
-            int shorterLength = (attempted.Length < correct.Length ? attempted.Length : correct.Length);
+            int shorterLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
 
             // First - [
             for (int i = 0; i < shorterLength; i++)
             {
-                if (correct[i] != attempted[i])
+                if (secondSongName[i].ToString().ToUpper() != firstSongName[i].ToString().ToUpper())
                 {
                     first = i;
                     break;
@@ -839,11 +839,11 @@ namespace MindTheGap
             }
 
             // Last - ]
-            var a = correct.Reverse().ToArray();
-            var b = attempted.Reverse().ToArray();
+            var a = secondSongName.Reverse().ToArray();
+            var b = firstSongName.Reverse().ToArray();
             for (int i = 0; i < shorterLength; i++)
             {
-                if (a[i] != b[i])
+                if (a[i].ToString().ToUpper() != b[i].ToString().ToUpper())
                 {
                     last = i;
                     break;
@@ -851,7 +851,7 @@ namespace MindTheGap
             }
 
             if (first == -1 && last == -1)
-                result = attempted;
+                result = firstSongName;
             else
             {
                 var sb = new StringBuilder();
@@ -865,21 +865,60 @@ namespace MindTheGap
                     last = shorterLength - first;
 
                 if (first > 0)
-                    sb.Append(attempted.Substring(0, first));
+                {
+                    beforeOpeningBrace = firstSongName.Substring(0, first);
+                    sb.Append(beforeOpeningBrace);
+                }
 
                 sb.Append("[");
 
-                if (last > -1 && last + first < attempted.Length)
-                    sb.Append(attempted.Substring(first, attempted.Length - last - first));
+                if (last > -1 && last + first < firstSongName.Length)
+                {
+                    withinBraces = firstSongName.Substring(first, firstSongName.Length - last - first);
+                    sb.Append(withinBraces);
+                }
 
                 sb.Append("]");
 
                 if (last > 0)
-                    sb.Append(attempted.Substring(attempted.Length - last, last));
-
+                {
+                    afterClosingBrace = firstSongName.Substring(firstSongName.Length - last, last);
+                    sb.Append(afterClosingBrace);
+                }
                 result = sb.ToString();
+
             }
-            //Assert.AreEqual(expectedResult, result);
+
+            System.Windows.MessageBox.Show(firstSongName + Environment.NewLine + secondSongName + Environment.NewLine + result + Environment.NewLine + Environment.NewLine + "Before opening brace: " + beforeOpeningBrace + Environment.NewLine + "Within braces: " + withinBraces + Environment.NewLine + "After closing brace: " + afterClosingBrace);
+
+            string appendThisToSongToRename = string.Empty;
+
+            char firstLetterWithinBraces = withinBraces[0];
+            char nextLetterAlphabetically = ++firstLetterWithinBraces;
+
+            char charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
+
+
+            if (nextLetterAlphabetically == charFromSecondSongName)
+            {
+                //FIX THIS:
+                //TO FIX REPOSITION MOON RIVER AFTER I COULDN'T LIVE WITHOUT YOUR LOVE
+                //charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[1];
+
+
+            }
+            else
+            {
+                appendThisToSongToRename = beforeOpeningBrace + nextLetterAlphabetically + "~ ";
+            }
+
+            string newSongName = string.Empty;
+
+            newSongName = appendThisToSongToRename + songToRename;
+
+
+            return newSongName;
+
         }
 
 
