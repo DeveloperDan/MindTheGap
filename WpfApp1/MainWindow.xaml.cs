@@ -596,7 +596,7 @@ namespace MindTheGap
 
                         if (common.Trim().Length > 0)
                         {
-                            System.Windows.MessageBox.Show("Common titles: " + common);
+                            //System.Windows.MessageBox.Show("Common titles: " + common);
                         }
                     }
                     catch (Exception)
@@ -616,130 +616,6 @@ namespace MindTheGap
             }
         }
 
-        private void RepositionSongOLD()
-        {
-            SongFileInfo selectedSong;
-
-            try
-            {
-                selectedSong = (SongFileInfo)SongsByTitleThenArtistGrid.SelectedItem;
-
-                if (selectedSong == null)
-                {
-                    System.Windows.MessageBox.Show("No song selected.");
-                    return;
-                }
-
-                System.Windows.MessageBox.Show(selectedSong.FileName);
-
-                if (true)
-                {
-
-                    int artistGapRequested;
-
-                    if (int.TryParse(ArtistGapTextBox.Text, out artistGapRequested))
-                    {
-                        //parsing successful 
-                    }
-                    else
-                    {
-                        //parsing failed. 
-                    }
-
-
-                    int titleGapRequested;
-
-                    if (int.TryParse(TitleGapTextBox.Text, out titleGapRequested))
-                    {
-                        //parsing successful 
-                    }
-                    else
-                    {
-                        //parsing failed. 
-                    }
-
-                    int genreGapRequested;
-
-                    if (int.TryParse(GenreGapTextBox.Text, out genreGapRequested))
-                    {
-                        //parsing successful 
-                    }
-                    else
-                    {
-                        //parsing failed. 
-                    }
-
-                    List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
-
-
-                    //var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead > genreGapRequested &&
-                    //                                            sng.Genre == selectedSong.Genre).OrderBy(sng2 => sng2.FileName);  //orderby is critical
-
-                    var songsFittingGapNeeds = allSongsList.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
-                                                                sng.TitleGapAhead >= titleGapRequested &&
-                                                                sng.Genre.ToUpper() == selectedSong.Genre.ToUpper()).OrderBy(sng2 => sng2.FileName);  //orderby is critical
-
-                    string msg = string.Empty;
-                    int gapToNextOccuranceOfArtist = 0;
-                    int positionOfPreviousOccuranceOfArtist = 0;
-                    int gapFromPreviousOccuranceOfArtist = 0;
-
-
-                    foreach (var songFittingGapNeeds in songsFittingGapNeeds)
-                    {
-
-                        var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position)
-                                                                                .OrderBy(sng2 => sng2.FileName);    //orderby is critical
-
-                        //tests below...
-
-                        //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > songFittingGapNeeds.Position - artistGapRequested)
-                        //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
-
-                        //var allSongsStartingAtGapNeedsPostion = allSongsList.Where(sng => sng.Position > positionOfPreviousOccuranceOfArtist)
-                        //                                                        .OrderBy(sng2 => sng2.FileName);    //orderby is critical
-
-                        foreach (var thisSongFromAllSong in allSongsStartingAtGapNeedsPostion)
-                        {
-
-                            if (thisSongFromAllSong.Artist.ToUpper() == selectedSong.Artist.ToUpper())
-                            {
-
-                                gapToNextOccuranceOfArtist = thisSongFromAllSong.Position - songFittingGapNeeds.Position;
-                                gapFromPreviousOccuranceOfArtist = songFittingGapNeeds.Position - positionOfPreviousOccuranceOfArtist;
-
-                                if (gapToNextOccuranceOfArtist >= artistGapRequested)
-                                {
-                                    if (gapFromPreviousOccuranceOfArtist >= artistGapRequested)
-                                    {
-                                        msg += songFittingGapNeeds.FileName + ", gapFromArtist: " + gapFromPreviousOccuranceOfArtist + ", gapToArtist: " + gapToNextOccuranceOfArtist + ", nextOccuranceOfArtistPosition: " + thisSongFromAllSong.Position + ", GenreGapAhead: " + songFittingGapNeeds.GenreGapAhead + Environment.NewLine;
-                                    }
-                                }
-
-                                positionOfPreviousOccuranceOfArtist = thisSongFromAllSong.Position;
-
-                                break;
-                            }
-                        }
-
-                    }
-
-                    if (msg.Length < 1999)
-                    {
-                        System.Windows.MessageBox.Show(msg);
-                    }
-                    else
-                    {
-                        System.Windows.MessageBox.Show("(partial) See grid three for full list: " + Environment.NewLine + msg.Substring(0, 1999));
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.ToString());
-            }
-        }
 
         private void RenameSelectedSongButton_Click(object sender, RoutedEventArgs e)
         {
@@ -764,7 +640,7 @@ namespace MindTheGap
                     return;
                 }
 
-                System.Windows.MessageBox.Show("Song to rename: " + selectedSong.FileName);
+                //System.Windows.MessageBox.Show("Song to rename: " + selectedSong.FileName);
 
 
                 sortSelectedSongAlphabeticallyAfterThisSong = (SongFileInfo)GridThree.SelectedItem;
@@ -775,13 +651,13 @@ namespace MindTheGap
                     return;
                 }
 
-                System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortSelectedSongAlphabeticallyAfterThisSong.FileName);
+                //System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortSelectedSongAlphabeticallyAfterThisSong.FileName);
 
                     List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
           
                 var nextSong = allSongsList.Where(sng => sng.Position == sortSelectedSongAlphabeticallyAfterThisSong.Position + 1 ).FirstOrDefault();
 
-                System.Windows.MessageBox.Show("Next song: " + nextSong.FileName);
+                //System.Windows.MessageBox.Show("Next song: " + nextSong.FileName);
 
 
                 string newSongName = GetNewSongFileNameSmushedAlphabeticallyBetweenTwoSongNames(sortSelectedSongAlphabeticallyAfterThisSong.FileName, nextSong.FileName, selectedSong.FileName);
@@ -843,17 +719,20 @@ namespace MindTheGap
             string beforeOpeningBrace = string.Empty;
             string withinBraces = string.Empty;
             string afterClosingBrace = string.Empty;
+            string firstSongNameMinusSingleQuote = firstSongName.Replace("'", "");
 
             string result = null;
-            int shorterSongNameLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
+            //int shorterSongNameLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
+            int shorterSongNameLength = (firstSongNameMinusSingleQuote.Length < secondSongName.Length ? firstSongNameMinusSingleQuote.Length : secondSongName.Length);
 
             // Get opening bracket postion - [
             for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
             {
-                letterFromFirstSongAtThisIndex = firstSongName[indexToLetter].ToString().ToUpper();
+                //letterFromFirstSongAtThisIndex = firstSongName[indexToLetter].ToString().ToUpper();
+                letterFromFirstSongAtThisIndex = firstSongNameMinusSingleQuote[indexToLetter].ToString().ToUpper();
                 letterFromSecondSongAtThisIndex = secondSongName[indexToLetter].ToString().ToUpper();
 
-                if (letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex)
+                if (letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex && letterFromFirstSongAtThisIndex != "'") //blow past single quotes "'"
                 {   //We've reached a non-matching letter
                     firstDifferentLetterIndex = indexToLetter;
                     // if more than one letter beyond is not important than this is the correct break point
@@ -870,7 +749,8 @@ namespace MindTheGap
 
             // Get closing bracket postion - ]
             var a = secondSongName.Reverse().ToArray();
-            var b = firstSongName.Reverse().ToArray();
+            //var b = firstSongName.Reverse().ToArray();
+            var b = firstSongNameMinusSingleQuote.Reverse().ToArray();
             for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
             {
                 if (a[indexToLetter].ToString().ToUpper() != b[indexToLetter].ToString().ToUpper())
@@ -881,7 +761,8 @@ namespace MindTheGap
             }
 
             if (firstDifferentLetterIndex == -1 && lastDifferentLetterIndex == -1)
-                result = firstSongName;
+                //result = firstSongName;
+                result = firstSongNameMinusSingleQuote;
             else
             {
                 var sb = new StringBuilder();
@@ -896,15 +777,18 @@ namespace MindTheGap
 
                 if (firstDifferentLetterIndex > 0)
                 {
-                    beforeOpeningBrace = firstSongName.Substring(0, firstDifferentLetterIndex);
+                    //beforeOpeningBrace = firstSongName.Substring(0, firstDifferentLetterIndex); 
+                    beforeOpeningBrace = firstSongNameMinusSingleQuote.Substring(0, firstDifferentLetterIndex);
                     sb.Append(beforeOpeningBrace);
                 }
 
                 sb.Append("[");
 
-                if (lastDifferentLetterIndex > -1 && lastDifferentLetterIndex + firstDifferentLetterIndex < firstSongName.Length)
+                //if (lastDifferentLetterIndex > -1 && lastDifferentLetterIndex + firstDifferentLetterIndex < firstSongName.Length)
+                if (lastDifferentLetterIndex > -1 && lastDifferentLetterIndex + firstDifferentLetterIndex < firstSongNameMinusSingleQuote.Length)
                 {
-                    withinBraces = firstSongName.Substring(firstDifferentLetterIndex, firstSongName.Length - lastDifferentLetterIndex - firstDifferentLetterIndex);
+                    //withinBraces = firstSongName.Substring(firstDifferentLetterIndex, firstSongName.Length - lastDifferentLetterIndex - firstDifferentLetterIndex);
+                    withinBraces = firstSongNameMinusSingleQuote.Substring(firstDifferentLetterIndex, firstSongNameMinusSingleQuote.Length - lastDifferentLetterIndex - firstDifferentLetterIndex);
                     sb.Append(withinBraces);
                 }
 
@@ -912,18 +796,33 @@ namespace MindTheGap
 
                 if (lastDifferentLetterIndex > 0)
                 {
-                    afterClosingBrace = firstSongName.Substring(firstSongName.Length - lastDifferentLetterIndex, lastDifferentLetterIndex);
+                    //afterClosingBrace = firstSongName.Substring(firstSongName.Length - lastDifferentLetterIndex, lastDifferentLetterIndex);
+                    afterClosingBrace = firstSongNameMinusSingleQuote.Substring(firstSongNameMinusSingleQuote.Length - lastDifferentLetterIndex, lastDifferentLetterIndex);
                     sb.Append(afterClosingBrace);
                 }
                 result = sb.ToString();
 
             }
 
-            System.Windows.MessageBox.Show(firstSongName + Environment.NewLine + secondSongName + Environment.NewLine + result + Environment.NewLine + Environment.NewLine + "Before opening brace: " + beforeOpeningBrace + Environment.NewLine + "Within braces: " + withinBraces + Environment.NewLine + "After closing brace: " + afterClosingBrace);
+            System.Windows.MessageBox.Show(firstSongNameMinusSingleQuote + Environment.NewLine + secondSongName + Environment.NewLine + result + Environment.NewLine + Environment.NewLine + "Before opening brace: " + beforeOpeningBrace + Environment.NewLine + "Within braces: " + withinBraces + Environment.NewLine + "After closing brace: " + afterClosingBrace);
 
             string appendThisToSongToRename = string.Empty;
 
             char firstLetterWithinBraces = withinBraces[0];
+
+            //https://theasciicode.com.ar/extended-ascii-code/registered-trademark-symbol-ascii-code-169.html
+
+            if (firstLetterWithinBraces.ToString() == "-")
+            {
+                firstLetterWithinBraces = " ".ToCharArray()[0];
+            }
+
+            if (firstLetterWithinBraces.ToString() == "~")
+            {
+                firstLetterWithinBraces = "}".ToCharArray()[0];
+            }
+
+
             char nextLetterAlphabetically = ++firstLetterWithinBraces;
 
             char charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
