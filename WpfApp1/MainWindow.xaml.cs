@@ -786,7 +786,23 @@ namespace MindTheGap
 
                 string newSongName = GetNewSongFileNameSmushedAlphabeticallyBetweenTwoSongNames(sortSelectedSongAlphabeticallyAfterThisSong.FileName, nextSong.FileName, selectedSong.FileName);
 
-                System.Windows.MessageBox.Show("New song name: " + newSongName);
+                var ans =  System.Windows.MessageBox.Show("New song name: " + newSongName, "Rename song?", MessageBoxButton.YesNoCancel);
+
+                if (ans == MessageBoxResult.Yes)
+                {
+                    //https://stackoverflow.com/a/20724492/381082
+
+                    //var sourcePath = selectedSong.FilePath // @"C:\folder\oldname.txt";
+                    var directory = System.IO.Path.GetDirectoryName(selectedSong.FilePath);
+                    var extension = System.IO.Path.GetExtension(selectedSong.FilePath);
+                    var destinationPath = System.IO.Path.Combine(directory, newSongName);
+                    destinationPath = System.IO.Path.ChangeExtension(destinationPath, extension);
+                    File.Move(selectedSong.FilePath, destinationPath);
+
+                    //System.IO.File.Move(selectedSong.FilePath, newSongName);
+                }
+
+
 
 
             }
@@ -820,69 +836,83 @@ namespace MindTheGap
             // and: https://stackoverflow.com/questions/3343874/compare-two-strings-and-get-the-difference
             // and: 
 
-            int first = -1, last = -1;
+            string letterFromFirstSongAtThisIndex = string.Empty;
+            string letterFromSecondSongAtThisIndex = string.Empty;
+            int firstDifferentLetterIndex = -1, lastDifferentLetterIndex = -1;
+            string letterAlphabeticallyOneBeyondFirstSongLetterAtThisIndex;
             string beforeOpeningBrace = string.Empty;
             string withinBraces = string.Empty;
             string afterClosingBrace = string.Empty;
 
             string result = null;
-            int shorterLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
+            int shorterSongNameLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
 
-            // First - [
-            for (int i = 0; i < shorterLength; i++)
+            // Get opening bracket postion - [
+            for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
             {
-                if (secondSongName[i].ToString().ToUpper() != firstSongName[i].ToString().ToUpper())
-                {
-                    first = i;
-                    break;
+                letterFromFirstSongAtThisIndex = firstSongName[indexToLetter].ToString().ToUpper();
+                letterFromSecondSongAtThisIndex = secondSongName[indexToLetter].ToString().ToUpper();
+
+                if (letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex)
+                {   //We've reached a non-matching letter
+                    firstDifferentLetterIndex = indexToLetter;
+                    // if more than one letter beyond is not important than this is the correct break point
+                    //break;
+
+                    // now see if the non-matching letter more than one letter away alphabetically so there is room for another song here alphabetically
+                    letterAlphabeticallyOneBeyondFirstSongLetterAtThisIndex = (++letterFromFirstSongAtThisIndex.ToCharArray()[0]).ToString();
+                    if (letterFromSecondSongAtThisIndex != letterAlphabeticallyOneBeyondFirstSongLetterAtThisIndex)
+                    {
+                        break;
+                    }
                 }
             }
 
-            // Last - ]
+            // Get closing bracket postion - ]
             var a = secondSongName.Reverse().ToArray();
             var b = firstSongName.Reverse().ToArray();
-            for (int i = 0; i < shorterLength; i++)
+            for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
             {
-                if (a[i].ToString().ToUpper() != b[i].ToString().ToUpper())
+                if (a[indexToLetter].ToString().ToUpper() != b[indexToLetter].ToString().ToUpper())
                 {
-                    last = i;
+                    lastDifferentLetterIndex = indexToLetter;
                     break;
                 }
             }
 
-            if (first == -1 && last == -1)
+            if (firstDifferentLetterIndex == -1 && lastDifferentLetterIndex == -1)
                 result = firstSongName;
             else
             {
                 var sb = new StringBuilder();
-                if (first == -1)
-                    first = shorterLength;
-                if (last == -1)
-                    last = shorterLength;
+                if (firstDifferentLetterIndex == -1)
+                    firstDifferentLetterIndex = shorterSongNameLength;
+                if (lastDifferentLetterIndex == -1)
+                    lastDifferentLetterIndex = shorterSongNameLength;
                 // If same letter repeats multiple times (ex: addition)
                 // and error is on that letter, we have to trim trail.
-                if (first + last > shorterLength)
-                    last = shorterLength - first;
+                if (firstDifferentLetterIndex + lastDifferentLetterIndex > shorterSongNameLength)
+                    lastDifferentLetterIndex = shorterSongNameLength - firstDifferentLetterIndex;
 
-                if (first > 0)
+                if (firstDifferentLetterIndex > 0)
                 {
-                    beforeOpeningBrace = firstSongName.Substring(0, first);
+                    beforeOpeningBrace = firstSongName.Substring(0, firstDifferentLetterIndex);
                     sb.Append(beforeOpeningBrace);
                 }
 
                 sb.Append("[");
 
-                if (last > -1 && last + first < firstSongName.Length)
+                if (lastDifferentLetterIndex > -1 && lastDifferentLetterIndex + firstDifferentLetterIndex < firstSongName.Length)
                 {
-                    withinBraces = firstSongName.Substring(first, firstSongName.Length - last - first);
+                    withinBraces = firstSongName.Substring(firstDifferentLetterIndex, firstSongName.Length - lastDifferentLetterIndex - firstDifferentLetterIndex);
                     sb.Append(withinBraces);
                 }
 
                 sb.Append("]");
 
-                if (last > 0)
+                if (lastDifferentLetterIndex > 0)
                 {
-                    afterClosingBrace = firstSongName.Substring(firstSongName.Length - last, last);
+                    afterClosingBrace = firstSongName.Substring(firstSongName.Length - lastDifferentLetterIndex, lastDifferentLetterIndex);
                     sb.Append(afterClosingBrace);
                 }
                 result = sb.ToString();
@@ -901,10 +931,7 @@ namespace MindTheGap
 
             if (nextLetterAlphabetically == charFromSecondSongName)
             {
-                //FIX THIS:
-                //TO FIX REPOSITION MOON RIVER AFTER I COULDN'T LIVE WITHOUT YOUR LOVE
-                //charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[1];
-
+                //THIS CONDITION SHOULD NEVER BE TRUE!!!
 
             }
             else
@@ -914,7 +941,7 @@ namespace MindTheGap
 
             string newSongName = string.Empty;
 
-            newSongName = appendThisToSongToRename + songToRename;
+            newSongName = appendThisToSongToRename.ToLower() + songToRename;
 
 
             return newSongName;
