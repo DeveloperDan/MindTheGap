@@ -112,7 +112,16 @@ namespace MindTheGap
                 {
                     filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
                     dashPosition = filename.IndexOf(" - ");
-                    tildePositionPlusOne = filename.IndexOf("~") + 1;
+
+                    if (filename.Contains("~~"))
+                    {
+                        tildePositionPlusOne = filename.IndexOf("~~") + 2;
+                    }
+                    else
+                    {
+                        tildePositionPlusOne = filename.IndexOf("~") + 1;
+                    }
+
                     parenPositionMinusOne = filename.IndexOf("(") - 1;
                     if (parenPositionMinusOne > -1)
                     {
@@ -297,32 +306,32 @@ namespace MindTheGap
                 }
                 catch (Exception ex)
                 {
-                System.Windows.MessageBox.Show(ex.ToString());
+                    System.Windows.MessageBox.Show(ex.ToString());
 
                     //throw;
                 }
 
                 // Get Genre gap +++++++++++++++++++++++++++++
 
-                try 
-	{	        
-	
-                //https://stackoverflow.com/a/38822432/381082
-                var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre?.ToUpper() == song.Genre?.ToUpper());
+                try
+                {
 
-     
+                    //https://stackoverflow.com/a/38822432/381082
+                    var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre?.ToUpper() == song.Genre?.ToUpper());
 
-                song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
 
-                var genreGap = nextGenreOccuranceIndex - (currentIndex + 1);
-                song.GenreGapAhead = genreGap;
-                                   	
-	}
-	catch (Exception ex)
-	{
 
-		                System.Windows.MessageBox.Show(ex.ToString());
-	}
+                    song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
+
+                    var genreGap = nextGenreOccuranceIndex - (currentIndex + 1);
+                    song.GenreGapAhead = genreGap;
+
+                }
+                catch (Exception ex)
+                {
+
+                    System.Windows.MessageBox.Show(ex.ToString());
+                }
                 previousTitle = song.Title;
                 previousArtist = song.Artist;
             }
@@ -653,16 +662,16 @@ namespace MindTheGap
 
                 //System.Windows.MessageBox.Show("Alphabetically follow this song: " + sortSelectedSongAlphabeticallyAfterThisSong.FileName);
 
-                    List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
-          
-                var nextSong = allSongsList.Where(sng => sng.Position == sortSelectedSongAlphabeticallyAfterThisSong.Position + 1 ).FirstOrDefault();
+                List<SongFileInfo> allSongsList = SongsByTitleThenArtistGrid.ItemsSource.Cast<SongFileInfo>().ToList();
+
+                var nextSong = allSongsList.Where(sng => sng.Position == sortSelectedSongAlphabeticallyAfterThisSong.Position + 1).FirstOrDefault();
 
                 //System.Windows.MessageBox.Show("Next song: " + nextSong.FileName);
 
 
                 string newSongName = GetNewSongFileNameSmushedAlphabeticallyBetweenTwoSongNames(sortSelectedSongAlphabeticallyAfterThisSong.FileName, nextSong.FileName, selectedSong.FileName);
 
-                var ans =  System.Windows.MessageBox.Show("New song name: " + newSongName, "Rename song?", MessageBoxButton.YesNoCancel);
+                var ans = System.Windows.MessageBox.Show("New song name: " + newSongName, "Rename song?", MessageBoxButton.YesNoCancel);
 
                 if (ans == MessageBoxResult.Yes)
                 {
@@ -732,7 +741,7 @@ namespace MindTheGap
                 letterFromFirstSongAtThisIndex = firstSongNameMinusSingleQuote[indexToLetter].ToString().ToUpper();
                 letterFromSecondSongAtThisIndex = secondSongName[indexToLetter].ToString().ToUpper();
 
-                if (letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex && letterFromFirstSongAtThisIndex != "'") //blow past single quotes "'"
+                if ((letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex) || (letterFromFirstSongAtThisIndex == "~")) //give up at the tilde
                 {   //We've reached a non-matching letter
                     firstDifferentLetterIndex = indexToLetter;
                     // if more than one letter beyond is not important than this is the correct break point
@@ -828,7 +837,7 @@ namespace MindTheGap
             char charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
 
 
-            if (nextLetterAlphabetically == charFromSecondSongName)
+            if (nextLetterAlphabetically == charFromSecondSongName && nextLetterAlphabetically != '~')
             {
                 //THIS CONDITION SHOULD NEVER BE TRUE!!!
 
