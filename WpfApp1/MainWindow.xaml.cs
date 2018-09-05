@@ -729,17 +729,18 @@ namespace MindTheGap
             string withinBraces = string.Empty;
             string afterClosingBrace = string.Empty;
             string firstSongNameMinusSingleQuote = firstSongName.Replace("'", "");
+            string secondSongNameMinusSingleQuote = secondSongName.Replace("'", "");
 
             string result = null;
             //int shorterSongNameLength = (firstSongName.Length < secondSongName.Length ? firstSongName.Length : secondSongName.Length);
-            int shorterSongNameLength = (firstSongNameMinusSingleQuote.Length < secondSongName.Length ? firstSongNameMinusSingleQuote.Length : secondSongName.Length);
+            int shorterSongNameLength = (firstSongNameMinusSingleQuote.Length < secondSongNameMinusSingleQuote.Length ? firstSongNameMinusSingleQuote.Length : secondSongNameMinusSingleQuote.Length);
 
             // Get opening bracket postion - [
             for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
             {
                 //letterFromFirstSongAtThisIndex = firstSongName[indexToLetter].ToString().ToUpper();
                 letterFromFirstSongAtThisIndex = firstSongNameMinusSingleQuote[indexToLetter].ToString().ToUpper();
-                letterFromSecondSongAtThisIndex = secondSongName[indexToLetter].ToString().ToUpper();
+                letterFromSecondSongAtThisIndex = secondSongNameMinusSingleQuote[indexToLetter].ToString().ToUpper();
 
                 if ((letterFromSecondSongAtThisIndex != letterFromFirstSongAtThisIndex) || (letterFromFirstSongAtThisIndex == "~")) //give up at the tilde
                 {   //We've reached a non-matching letter
@@ -757,7 +758,7 @@ namespace MindTheGap
             }
 
             // Get closing bracket postion - ]
-            var a = secondSongName.Reverse().ToArray();
+            var a = secondSongNameMinusSingleQuote.Reverse().ToArray();
             //var b = firstSongName.Reverse().ToArray();
             var b = firstSongNameMinusSingleQuote.Reverse().ToArray();
             for (int indexToLetter = 0; indexToLetter < shorterSongNameLength; indexToLetter++)
@@ -813,7 +814,7 @@ namespace MindTheGap
 
             }
 
-            System.Windows.MessageBox.Show(firstSongNameMinusSingleQuote + Environment.NewLine + secondSongName + Environment.NewLine + result + Environment.NewLine + Environment.NewLine + "Before opening brace: " + beforeOpeningBrace + Environment.NewLine + "Within braces: " + withinBraces + Environment.NewLine + "After closing brace: " + afterClosingBrace);
+            System.Windows.MessageBox.Show(firstSongNameMinusSingleQuote + Environment.NewLine + secondSongNameMinusSingleQuote + Environment.NewLine + result + Environment.NewLine + Environment.NewLine + "Before opening brace: " + beforeOpeningBrace + Environment.NewLine + "Within braces: " + withinBraces + Environment.NewLine + "After closing brace: " + afterClosingBrace);
 
             string appendThisToSongToRename = string.Empty;
 
