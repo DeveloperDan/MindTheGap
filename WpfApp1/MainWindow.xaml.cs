@@ -30,6 +30,11 @@ namespace MindTheGap
 
         private void GetFilesButton_Click(object sender, RoutedEventArgs e)
         {
+            GetFiles();
+        }
+
+        private void GetFiles()
+        {
             try
             {
 
@@ -714,7 +719,7 @@ namespace MindTheGap
                     destinationPath = System.IO.Path.ChangeExtension(destinationPath, extension);
                     File.Move(selectedSong.FilePath, destinationPath);
 
-                    //System.IO.File.Move(selectedSong.FilePath, newSongName);
+                    GetFiles();
                 }
 
 
