@@ -719,7 +719,7 @@ namespace MindTheGap
                     destinationPath = System.IO.Path.ChangeExtension(destinationPath, extension);
                     File.Move(selectedSong.FilePath, destinationPath);
 
-                    GetFiles();
+                   GetFiles();
                 }
 
 
