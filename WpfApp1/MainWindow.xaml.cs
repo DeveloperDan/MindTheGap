@@ -457,7 +457,7 @@ namespace MindTheGap
                     // Now go back and get songs before the first occurance of the selected title
                     // Add a range of songs from the first song to the first of the selected title 
                     // (if gap need is satisfied and first song is not the selected title)
-                    if (allSongsListSorted.FirstOrDefault().Title != selectedSong.Title)
+                    if (allSongsListSorted.FirstOrDefault().Title.ToUpper() != selectedSong.Title.ToUpper())
                     {
                         var firstInstanceOfTitle = allSongsListSorted.FirstOrDefault(sng => sng.Title.ToUpper() == selectedSong.Title.ToUpper());
                         var rangeOfSongsFromFirstFittingTitleGapNeeds = allSongsListSorted.Where(sng => sng.Position < firstInstanceOfTitle.Position - titleGapRequested);
@@ -508,7 +508,7 @@ namespace MindTheGap
                     // Now go back and get songs before the first occurance of the selected artist 
                     // Add a range of songs from the first song to the first of the selected artist 
                     // (if gap need is satisfied and first song is not the selected artist)
-                    if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault().Artist != selectedSong.Artist)
+                    if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault().Artist.ToUpper() != selectedSong.Artist.ToUpper())
                     {
 
                         var firstInstanceOfArtist = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted.FirstOrDefault(sng => sng.Artist.ToUpper() == selectedSong.Artist.ToUpper());
