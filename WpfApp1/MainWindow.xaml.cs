@@ -104,6 +104,7 @@ namespace MindTheGap
             {
 
                 string filename = string.Empty;
+                string filenameUpToDash = string.Empty;
                 int dashPosition;
                 int tildePositionPlusOne;
                 int parenPositionMinusOne;
@@ -116,7 +117,11 @@ namespace MindTheGap
                 try
                 {
                     filename = System.IO.Path.GetFileNameWithoutExtension(filepath);
+
+
+
                     dashPosition = filename.IndexOf(" - ");
+                    filenameUpToDash = filename.Substring(0, dashPosition);
 
                     if (filename.Contains("~~"))
                     {
@@ -127,7 +132,8 @@ namespace MindTheGap
                         tildePositionPlusOne = filename.IndexOf("~") + 1;
                     }
 
-                    parenPositionMinusOne = filename.IndexOf("(") - 1;
+                    //no, we don't want the parenPosition if it's after the dash: 
+                    parenPositionMinusOne = filenameUpToDash.IndexOf("(") - 1;
                     if (parenPositionMinusOne > -1)
                     {
 
@@ -137,8 +143,26 @@ namespace MindTheGap
                     {
                         title = filename.Substring(tildePositionPlusOne, dashPosition - tildePositionPlusOne).Trim();
                     }
+
+                    if (filename.Contains("with Diana Ross"))
+                    {
+                        //sfd
+                    }
+
+                    if (filename.Contains("Duncan"))
+                    {
+                        //sfd
+                    }
+
                     lengthOfTitle = filename.Length - dashPosition;
+
+                    // the 3 below is for this " - " which starts at the dash position
                     artist = filename.Substring(dashPosition + 3, lengthOfTitle - 3).Trim();
+
+                    if (artist.Contains("("))
+                    {
+                        artist = artist.Substring(0, artist.IndexOf("(")).Trim();
+                    }
 
                     song = new SongFileInfo();
                     song.FilePath = filepath;
@@ -467,6 +491,7 @@ namespace MindTheGap
                     if (combinedRangesOfSongsQualifyingAs_Title_InsertLocations.Count() == 0)
                     {
                         System.Windows.MessageBox.Show("Title gap not met");
+                        return;
                     }
 
                     IOrderedEnumerable<SongFileInfo> combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocationsSorted = combinedRangesOfSongsQualifyingAs_Title_InsertLocations.OrderBy(sng => sng.FileName);
@@ -522,6 +547,7 @@ namespace MindTheGap
                     if (combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations.Count() == 0)
                     {
                         System.Windows.MessageBox.Show("Title gap not met");
+                        return;
                     }
 
                     var combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitle_InsertLocations.OrderBy(sng => sng.FileName).ToList();
@@ -586,10 +612,11 @@ namespace MindTheGap
                             }
                         }
                     }
-                    
+
                     if (songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.Count() == 0)
                     {
                         System.Windows.MessageBox.Show("Genre gap not met");
+                        return;
                     }
 
                     var songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted = songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.OrderBy(sng => sng.FileName).ToList();
@@ -610,10 +637,10 @@ namespace MindTheGap
                         }
                     }
 
-                    if (msg.Trim() == String.Empty)
-                    {
-                        msg = "No songs fit gap needs.";
-                    }
+                    //if (msg.Trim() == String.Empty)
+                    //{
+                    //    msg = "No songs fit gap needs.";
+                    //}
 
 
                     if (msg.Length < 1999)
@@ -626,28 +653,28 @@ namespace MindTheGap
                     }
 
 
-                    try
-                    {
-                        //https://stackoverflow.com/a/30981377/381082
-                        var songs = new List<string>();
-                        foreach (var song in songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations)
-                        {
-                            songs.Add(song.FileName);
-                        }
+                    //try
+                    //{
+                    //    //https://stackoverflow.com/a/30981377/381082
+                    //    var songs = new List<string>();
+                    //    foreach (var song in songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations)
+                    //    {
+                    //        songs.Add(song.FileName);
+                    //    }
 
-                        var common = new string(songs.Select(str => str.TakeWhile((c, index) => songs.All(s => s[index] == c)))
-                                                       .FirstOrDefault().ToArray());
+                    //    var common = new string(songs.Select(str => str.TakeWhile((c, index) => songs.All(s => s[index] == c)))
+                    //                                   .FirstOrDefault().ToArray());
 
-                        if (common.Trim().Length > 0)
-                        {
-                            //System.Windows.MessageBox.Show("Common titles: " + common);
-                        }
-                    }
-                    catch (Exception)
-                    {
+                    //    if (common.Trim().Length > 0)
+                    //    {
+                    //        //System.Windows.MessageBox.Show("Common titles: " + common);
+                    //    }
+                    //}
+                    //catch (Exception)
+                    //{
 
-                        //throw;
-                    }
+                    //    //throw;
+                    //}
 
 
 
@@ -716,10 +743,12 @@ namespace MindTheGap
                     var directory = System.IO.Path.GetDirectoryName(selectedSong.FilePath);
                     var extension = System.IO.Path.GetExtension(selectedSong.FilePath);
                     var destinationPath = System.IO.Path.Combine(directory, newSongName);
-                    destinationPath = System.IO.Path.ChangeExtension(destinationPath, extension);
+                    //var destinationPath = directory + @"\" + newSongName;
+                    //FAILS WHEN DOT IS IN SONG NAME: destinationPath = System.IO.Path.ChangeExtension(destinationPath, extension);
+                    destinationPath = System.IO.Path.ChangeExtension(destinationPath.Replace(".", " "), extension);
                     File.Move(selectedSong.FilePath, destinationPath);
 
-                   GetFiles();
+                    GetFiles();
                 }
 
 
@@ -870,7 +899,7 @@ namespace MindTheGap
 
             char nextLetterAlphabetically = ++firstLetterWithinBraces;
 
-            char charFromSecondSongName = secondSongName.Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
+            char charFromSecondSongName = secondSongName.Replace("'", "").Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
 
 
             if (nextLetterAlphabetically == charFromSecondSongName && nextLetterAlphabetically != '~')
