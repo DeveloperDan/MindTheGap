@@ -43,6 +43,8 @@ namespace MindTheGap
         public int tempArtistGapBehindFromSelectedSongToThisSong { get; set; }
         public int tempArtistGapAheadFromSelectedSongToNextOccuranceOfArtist { get; set; }
 
+        public bool LonelyStandard { get; set; }
+
 
     }
 }

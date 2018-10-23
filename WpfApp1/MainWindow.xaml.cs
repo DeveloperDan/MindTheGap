@@ -132,6 +132,12 @@ namespace MindTheGap
                         tildePositionPlusOne = filename.IndexOf("~") + 1;
                     }
 
+
+                    if (tildePositionPlusOne > 12)
+                    {
+
+                    }
+
                     //no, we don't want the parenPosition if it's after the dash: 
                     parenPositionMinusOne = filenameUpToDash.IndexOf("(") - 1;
                     if (parenPositionMinusOne > -1)
@@ -243,6 +249,10 @@ namespace MindTheGap
 
                 filename = song.FileName;
 
+                //if (filename == "Young At Heart - Frankie Carle")
+                //{
+                //    var lastSongByArtist = true;
+                //}
 
                 // Get Artist gap +++++++++++++++++++++++++++++
 
@@ -255,7 +265,8 @@ namespace MindTheGap
                     // a negative artistGap means we've reached that last occurance of the artist
                     // set the artistGap to a big number (about the distance from the current song to the last song)
                     // set the next occurance of artist to the song list count
-                    artistGap = songListByFileName.Count() - (currentIndex + 1);
+                    //huh?: artistGap = songListByFileName.Count() - (currentIndex + 1);
+                    artistGap = songListByFileName.Count();
                     song.NextOccuranceOfArtistIsAt = songListByFileName.Count();
                 }
 
@@ -348,6 +359,16 @@ namespace MindTheGap
                     //https://stackoverflow.com/a/38822432/381082
                     var nextGenreOccuranceIndex = songListByFileName.FindIndex(currentIndex + 1, sng => sng.Genre?.ToUpper() == song.Genre?.ToUpper());
 
+                    if (song.Genre?.ToUpper() == "FAV STANDARDS")
+                    {
+                        if (currentIndex > 0 && currentIndex < songListByFileName.Count() - 1)
+                        {
+                            if (songListByFileName[currentIndex - 1].Genre?.ToUpper() == "FAV POP" && songListByFileName[currentIndex + 1].Genre?.ToUpper() == "FAV POP")
+                            {
+                                song.LonelyStandard = true;
+                            }
+                        }
+                    }
 
 
                     song.NextOccuranceOfGenreIsAt = nextGenreOccuranceIndex + 1;
@@ -902,10 +923,9 @@ namespace MindTheGap
             char charFromSecondSongName = secondSongName.Replace("'", "").Substring(beforeOpeningBrace.Length, 1).ToCharArray()[0];
 
 
-            if (nextLetterAlphabetically == charFromSecondSongName && nextLetterAlphabetically != '~')
+            if (nextLetterAlphabetically == charFromSecondSongName && nextLetterAlphabetically != '~' && nextLetterAlphabetically != '!')
             {
                 //THIS CONDITION SHOULD NEVER BE TRUE!!!
-
             }
             else
             {
