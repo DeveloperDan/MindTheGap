@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MindTheGap"
         mc:Ignorable="d"
-        Title="MainWindow" Height="609.5" Width="1379.5" WindowStartupLocation="CenterOwner">
+        Title="MainWindow" Height="635.325" Width="1380" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,0,2">
         <Button x:Name="GetFilesButton" Content="Get Files" HorizontalAlignment="Left" Margin="7,0,0,0" VerticalAlignment="Top" Width="137" RenderTransformOrigin="0.5,0.5" Height="26" Click="GetFilesButton_Click">
             <Button.RenderTransform>
@@ -19,7 +19,7 @@
         </Button>
 
         <!--<StackPanel>-->
-        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,4,866,550" Content="Use Folder Picker&#xD;&#xA;" Height="23" Width="333"/>
+        <RadioButton  x:Name="UseFolderPickerRadioButton"  GroupName="WhichPath" Margin="173,16,866,562" Content="Use Folder Picker&#xD;&#xA;" Height="23" Width="333"/>
         <RadioButton  x:Name="UseLastPickerPathRadioButton"  GroupName="WhichPath" Content="Use This (Last Picker) Path" Margin="302,4,895,550" IsChecked="True"/>
         <!--<RadioButton x:Name="UseHardCodedPathRadioButton" GroupName="WhichPath"  HorizontalAlignment="Left" Margin="173,27,0,0" VerticalAlignment="Top" Width="1062"  Content="D:\Dan\Music\!!!!Mstr\!!!MASTER Instrumentals 6-3-18\!Fav Instrumentals Shuffled (6-3-18)\Jazz Instr 03 - 222 songs Artists Alpha Shuffled - Add to artists" />
         <RadioButton  x:Name="UseHardCodedPath2RadioButton" GroupName="WhichPath"  IsChecked="True" HorizontalAlignment="Left" Margin="173,47,0,0" VerticalAlignment="Top" Width="1071" Content="\\dlee13\H\!!!MASTER Instrumentals 6-19-18\!Fav Instrumentals Shuffled (6-19-18)\Jazz Instr 03 - 339 songs Artists Alpha Shuffled - Cont w Bill Evans"  />-->
@@ -44,6 +44,7 @@
         <Label x:Name="ArtistGapLabel" Content="Artist Gap : " HorizontalAlignment="Left" Margin="477,25,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.242,0.519"/>
         <Label x:Name="GenreGapLabel" Content="Genre Gap : " HorizontalAlignment="Left" Margin="618,23,0,0" VerticalAlignment="Top" Width="66"/>
         <Button x:Name="RenameSelectedSongButton" Content="Rename Selected Song" HorizontalAlignment="Left" Margin="518,295,0,0" VerticalAlignment="Top" Width="148" Click="RenameSelectedSongButton_Click"/>
+        <TextBlock TextWrapping="WrapWithOverflow" Margin="10,550,15,10">INSTRUCTIONS: 10. Add path to music 20. Get Files 30. Highlight song to reposition in grid one 40. Lower gaps 50. Click Reposition 60. Close dialogs, change gaps until grid three changes to gap > zero 70. Highlight song wanted as neighbor 80. Click rename.</TextBlock>
 
     </Grid>
 </Window>

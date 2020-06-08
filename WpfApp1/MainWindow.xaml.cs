@@ -584,6 +584,9 @@ namespace MindTheGap
 
                     if (songsFittingGenreGapNeedsMinusFirstSongsSorted != null)
                     {
+                        try
+                        {
+
                         foreach (var songFittingGenreGapNeeds in songsFittingGenreGapNeedsMinusFirstSongsSorted)
                         {
                             //var rangeOfSongsQualifyingAsInsertLocations = combinedRangesOfSongsQualifyingAsArtistAndTitleAndGenreInsertLocationsSorted.Where(sng => sng.Position > songFittingGenreGapNeeds.Position + genreGapRequested &&
@@ -618,6 +621,13 @@ namespace MindTheGap
                                 }
                             }
                         }
+                        }
+                        catch (Exception)
+                        {
+                            //Swallow error
+                            //throw;
+                        }
+
                     }
                     // NOTE: FOR GENRE THIS MAY BE A TINY RANGE: add a range of songs from the first song to the first of the selected genre 
                     // (if gap need is satisfied and first song is not the selected genre)
