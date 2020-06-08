@@ -646,7 +646,7 @@ namespace MindTheGap
 
                     if (songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations.Count() == 0)
                     {
-                        System.Windows.MessageBox.Show("Genre gap not met");
+                        System.Windows.MessageBox.Show("Genre (or artist) gap not met");
                         return;
                     }
 
