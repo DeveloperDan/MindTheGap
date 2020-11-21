@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MindTheGap"
         mc:Ignorable="d"
-        Title="MainWindow" Height="635.325" Width="1380" WindowStartupLocation="CenterOwner">
+        Title="MainWindow" Height="643.749" Width="1380" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,0,2">
         <Button x:Name="GetFilesButton" Content="Get Files" HorizontalAlignment="Left" Margin="7,0,0,0" VerticalAlignment="Top" Width="137" RenderTransformOrigin="0.5,0.5" Height="26" Click="GetFilesButton_Click">
             <Button.RenderTransform>
@@ -44,7 +44,7 @@
         <Label x:Name="ArtistGapLabel" Content="Artist Gap : " HorizontalAlignment="Left" Margin="477,25,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.242,0.519"/>
         <Label x:Name="GenreGapLabel" Content="Genre Gap : " HorizontalAlignment="Left" Margin="618,23,0,0" VerticalAlignment="Top" Width="66"/>
         <Button x:Name="RenameSelectedSongButton" Content="Rename Selected Song" HorizontalAlignment="Left" Margin="518,295,0,0" VerticalAlignment="Top" Width="148" Click="RenameSelectedSongButton_Click"/>
-        <TextBlock TextWrapping="WrapWithOverflow" Margin="10,550,15,10">INSTRUCTIONS: 10. Add path to music 20. Get Files 30. Highlight song to reposition in grid one 40. Lower gaps 50. Click Reposition 60. Close dialogs, change gaps until grid three changes to insert locations 70. Highlight song wanted as neighbor 80. Click rename.    NOTE: On Grid Three ignore songs having FILENAMES starting with letters Y and Z. Other titles eligible for rename.</TextBlock>
+        <TextBlock TextWrapping="WrapWithOverflow" Margin="10,550,15,10">INSTRUCTIONS: 10. Add path to music 20. Get Files 30. Highlight song to reposition in grid one 40. Lower gaps 50. Click Reposition 60. Close dialogs, change gaps until grid three changes to insert locations 70. Highlight song wanted as neighbor 80. Click rename.    NOTE: On Grid Three ignore songs having FILENAMES starting with letters Y and Z. Other titles eligible for rename. WARNING: NULL GENRE BREAKS THIS PROGRAM</TextBlock>
 
     </Grid>
 </Window>

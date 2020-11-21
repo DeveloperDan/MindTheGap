@@ -577,7 +577,7 @@ namespace MindTheGap
 
                     // Get the handful of songs having a matching genre and genreGapAhead
                     var songsFittingGenreGapNeedsMinusFirstSongsSorted = combinedRangesOfSongsQualifyingAs_ArtistAndTitleAndGenre_InsertLocationsSorted.Where(sng => sng.GenreGapAhead >= genreGapRequested &&
-                                                                        sng.Genre.ToUpper() == selectedSong.Genre.ToUpper()).OrderBy(sng2 => sng2.FileName);  //orderby is critical
+                                                                        sng?.Genre.ToUpper() == selectedSong?.Genre.ToUpper()).OrderBy(sng2 => sng2.FileName);  //orderby is critical
 
                     List<SongFileInfo> songsQualifyingAs_ArtistAndTitleAndGenre_InsertLocations = new List<SongFileInfo>();
 
